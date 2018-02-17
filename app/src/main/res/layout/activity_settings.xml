@@ -1,0 +1,49 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="#66c1ff"
+
+    tools:context="com.example.maor.trivia.SettingsActivity">
+
+
+    <TextView
+    android:id="@+id/textGameSounds"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:gravity="center"
+    android:text="@string/gameSounds"
+        android:layout_centerInParent="true"
+    />
+
+    <Switch
+        android:id="@+id/gameSounds"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+
+        android:layout_alignParentEnd="true"
+        android:layout_below="@+id/textGameSounds"
+        android:layout_marginEnd="174dp" />
+
+
+    <TextView
+        android:id="@+id/textVibrate"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:gravity="center"
+        android:text="@string/vibrate"
+        android:layout_below="@+id/gameSounds"
+        />
+
+    <Switch
+        android:id="@+id/vibrate"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+
+        android:layout_alignParentEnd="true"
+        android:layout_below="@+id/textVibrate"
+        android:layout_marginEnd="174dp" />
+
+</RelativeLayout>

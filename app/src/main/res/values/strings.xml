@@ -1,3 +1,19 @@
 <resources>
     <string name="app_name">Trivia</string>
+    <string name="userName">userName</string>
+    <string name="password">password</string>
+    <string name="login">login</string>
+    <string name="editProfile">edit Profile</string>
+    <string name="playNow">play Now</string>
+    <string name="yourStats">your Stats</string>
+    <string name="leaderboard">leader board</string>
+    <string name="settings">settings</string>
+    <string name="quickGame">quick Game</string>
+    <string name="compete">compete</string>
+    <string name="answer">answer</string>
+    <string name="question">question</string>
+    <string name="score">score</string>
+    <string name="gameSounds">gameSounds</string>
+    <string name="vibrate">Vibrate</string>
+    <string name="facebook_application_id" translatable="false">2061365520765006</string>
 </resources>
