@@ -49,6 +49,8 @@ import com.google.firebase.auth.GoogleAuthProvider;
 //    }
 //}
 
+
+//HELLO
 /**
  * Demonstrate Firebase Authentication using a Google ID Token.
  */
@@ -61,6 +63,7 @@ public class HomeActivity extends BaseActivity implements
     // [START declare_auth]
     private FirebaseAuth mAuth;
     // [END declare_auth]
+
 
     private GoogleSignInClient mGoogleSignInClient;
     private TextView mStatusTextView;
