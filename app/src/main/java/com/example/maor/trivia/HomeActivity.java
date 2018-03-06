@@ -118,22 +118,15 @@ public class HomeActivity extends BaseActivity implements
         super.onStart();
         // Check if user is signed in (non-null) and update UI accordingly.
         FirebaseUser currentUser = mAuth.getCurrentUser();
-
-
-        if (currentUser.isAnonymous() == false) {
-            Log.d("out","out");
-            // signed in. Show the "sign out" button and explanation.
-        } else {
-            Log.d("in","in");
-            updateUI(currentUser);
-
-            // not signed in. Show the "sign in" button and explanation
+           updateUI(currentUser);
+        if(mGoogleSignInClient.signOut().isSuccessful() == false)
+        {
+            signOut();
         }
-        /// force the application olny 1 user
-       // if (mAuth.getCurrentUser() != null) {
-            //finish();
-           // startActivity(new Intent(this, MenuActivity.class));
-      //  }
+
+
+
+
     }
     @Override
     public void onActivityResult(int requestCode, int resultCode, Intent data) {
@@ -258,7 +251,7 @@ public class HomeActivity extends BaseActivity implements
 
         switch (v.getId()) {
             case R.id.textViewSignup:
-                finish();
+               // finish();
                 startActivity(new Intent(this, SignUpActivity.class));
                 break;
 
@@ -269,13 +262,8 @@ public class HomeActivity extends BaseActivity implements
                 default:
                     break;
         }
-
-
     }
-
     private void userLogin() {
-
-
         String email = editTextEmail.getText().toString().trim();
         String password = editTextPassword.getText().toString().trim();
 
@@ -310,7 +298,7 @@ public class HomeActivity extends BaseActivity implements
             public void onComplete(@NonNull Task<AuthResult> task) {
                // progressBar.setVisibility(View.GONE);
                 if (task.isSuccessful()) {
-                    finish();
+                  //  finish();
                     Intent intent = new Intent(HomeActivity.this, MenuActivity.class);
                    intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
                    startActivity(intent);

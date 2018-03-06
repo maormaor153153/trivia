@@ -39,12 +39,6 @@ public class MenuActivity extends AppCompatActivity {
         });
 
 
-        Button back = (Button) findViewById(R.id.button00);
-        back.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                startActivity(new Intent(getApplicationContext(), HomeActivity.class));
-            }
-        });
+
     }
 }
