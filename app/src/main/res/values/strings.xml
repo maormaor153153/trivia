@@ -15,8 +15,9 @@
     <string name="score">score</string>
     <string name="gameSounds">gameSounds</string>
     <string name="vibrate">Vibrate</string>
-    <string name="facebook_application_id" translatable="false">2061365520765006</string>
 
+    <string name="facebook_app_id">2061365520765006</string>
+    <string name="fb_login_protocol_scheme">fb2061365520765006</string>
 
 
     <string name="label_google_sign_in">Firebase + Google Sign In</string>
@@ -92,4 +93,5 @@
 
     <string name="id_fmt">User ID: %s</string>
     <string name="email_fmt">Email: %s</string>
+    <string name="back">back</string>
 </resources>

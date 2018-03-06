@@ -30,5 +30,21 @@ public class MenuActivity extends AppCompatActivity {
         });
 
 
+        Button profile = (Button) findViewById(R.id.editProfile);
+        profile.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                startActivity(new Intent(getApplicationContext(), ProfileActivity.class));
+            }
+        });
+
+
+        Button back = (Button) findViewById(R.id.button00);
+        back.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                startActivity(new Intent(getApplicationContext(), HomeActivity.class));
+            }
+        });
     }
 }
