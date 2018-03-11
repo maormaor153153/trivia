@@ -91,9 +91,11 @@ public class QuickGameActivity extends AppCompatActivity {
         score = (TextView) findViewById(R.id.score);
         initilaizeTextView(score, "Score:");
 
+        Log.d("error","questionsRepo.size"+questionsRepo.size());
         r = new Random();
-        int numOfQuestion = r.nextInt(questionsRepo.size());
+        int numOfQuestion = r.nextInt(questionsRepo.size())+1; //TODO:check the +1
         displayQuestion(numOfQuestion);
+
 
     }
 

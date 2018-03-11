@@ -31,6 +31,16 @@ public class MenuActivity extends AppCompatActivity {
         });
 
 
+        Button editProfile = (Button) findViewById(R.id.image_profile);
+        editProfile.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                startActivity(new Intent(getApplicationContext(), ProfileActivity.class));
+            }
+        });
+
+
+
         TextView profile = findViewById(R.id.edit_profile_text);
         profile.setOnClickListener(new View.OnClickListener() {
             @Override
