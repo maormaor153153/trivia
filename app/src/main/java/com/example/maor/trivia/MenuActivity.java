@@ -5,6 +5,7 @@ import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.view.View;
 import android.widget.Button;
+import android.widget.TextView;
 
 public class MenuActivity extends AppCompatActivity {
 
@@ -30,7 +31,7 @@ public class MenuActivity extends AppCompatActivity {
         });
 
 
-        Button profile = (Button) findViewById(R.id.editProfile);
+        TextView profile = findViewById(R.id.edit_profile_text);
         profile.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {

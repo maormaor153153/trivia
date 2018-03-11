@@ -21,51 +21,81 @@
         android:id="@+id/question"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_above="@+id/answer1"
-        android:layout_alignParentStart="true"
-        android:layout_below="@+id/score"
-        android:layout_marginStart="138dp"
-        android:hint="@string/question"
+        android:layout_alignParentTop="true"
+        android:layout_centerInParent="true"
+        android:textStyle="bold"
+        android:layout_marginTop="100sp"
         android:textSize="20dp" />
 
-    <Button
-        android:id="@+id/answer1"
+    <LinearLayout
+        android:orientation="vertical"
+        android:id="@+id/question_container"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:hint="@string/answer"
-        android:layout_centerVertical="true"
-        android:background="@drawable/shape"
+        android:layout_alignParentBottom="true"
+        android:layout_centerInParent="true"
+        android:layout_marginBottom="50sp"
+
+        >
+
+
+        <Button
+            android:id="@+id/choice1"
+            android:layout_width="350sp"
+            android:layout_height="60sp"
+            android:background="@drawable/shape"
+            android:layout_gravity="center_horizontal"
+            android:layout_marginBottom="3sp"
+            android:visibility="invisible"/>
+
+        <Button
+            android:id="@+id/choice2"
+            android:layout_width="350sp"
+            android:layout_height="60sp"
+            android:background="@drawable/shape"
+            android:layout_gravity="center_horizontal"
+            android:layout_marginBottom="3sp"
+            android:visibility="invisible"/>
+
+        <Button
+            android:id="@+id/choice3"
+            android:layout_width="350sp"
+            android:layout_height="60sp"
+            android:background="@drawable/shape"
+            android:layout_gravity="center_horizontal"
+            android:layout_marginBottom="3sp"
+            android:visibility="invisible"
+            />
+
+
+
+        <Button
+            android:id="@+id/choice4"
+            android:layout_width="350sp"
+            android:layout_height="60sp"
+            android:background="@drawable/shape"
+            android:layout_gravity="center_horizontal"
+            android:layout_marginBottom="3sp"
+            android:visibility="invisible"/>
+
+
+    </LinearLayout>
+
+    <ProgressBar
+        android:id="@+id/progressbar"
+        style="@android:style/Widget.ProgressBar.Horizontal"
+        android:max="100"
+        android:progress="0"
+        android:progressDrawable="@drawable/custom_progressbar"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_alignParentBottom="true"
+        android:layout_centerInParent="true"
 
         />
 
-    <Button
-        android:id="@+id/answer2"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:layout_below="@id/answer1"
-        android:hint="@string/answer"
-        android:background="@drawable/shape"
 
-        />
 
-    <Button
-        android:id="@+id/answer3"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:layout_below="@id/answer2"
-        android:hint="@string/answer"
-        android:background="@drawable/shape"
 
-        />
-
-    <Button
-        android:id="@+id/answer4"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:layout_below="@id/answer3"
-        android:hint="@string/answer"
-        android:background="@drawable/shape"
-
-        />
 
 </RelativeLayout>
