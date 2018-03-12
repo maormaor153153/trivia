@@ -1,0 +1,9 @@
+A Java application can accept any number of arguments from the command line.@True
+Primitive data types are stored by reference in memory.@False
+User-defined methods can return multiple values.@False
+Multiple methods can have the same method name as long as they have different arguments or different return value.@True
+A breakpoint indicates the next line of code that will be executed. @True
+The Java API is a collection of software packages, classes and interfaces. @True
+Java is a compiled language.@True
+You can declare a final variable and later initialize it.@True
+Methods that are marked protected can be called in any subclass of that class.@True

@@ -1,0 +1,24 @@
+A Java application can accept any number of arguments from the command line.@path@java @location@jdk
+Which command is used to find an integer argument when reading from the command line?@Integer.parseInteger(arg[0]);@ int.parseInteger(arg[0]);@ parseInteger(arg[0]);@int.parseInt(arg[0])
+Primitive data types are stored by reference in memory.@word1.equals(word2)@word1 == word2@word1 = word2@word1 != word2
+Which type of loop is considered a post-test loop?@do…while@for@while @for…while
+What are the two main types of errors that cause bugs?@syntax and logic@divide by zero and invalid type@‘file not found’ and ‘ index out of bounds’ @mathematical and spelling 
+What option allows us to go to the next statement in our code when we are in debugging mode?@Step into@Step over@Step Out@Run the cursor
+Once in Debug mode on the command line, how can you get a list of possible debug commands?@Type ‘help’@Type ‘commands’@Type ‘debug commands’@ Type ‘debug’ 
+What does JAR stand for?@Java archive@Java archetype @Java arrangement @Java architecture 
+What Java command can be used to help with error handling? @try/catch@do/while@error/ handle@if/then
+The command line tool that is used to compile your program is@ls@java@compile@javac
+Single line comments in Java begin with the following characters.@//@??@..@\\ 
+What is a reason you might want to use the **final** keyword?@the express a value cannot be changed once assigned@the end the class completely@ the express that this is the last time the variable should be used@that the variable will be read as the last one
+Which keyword do you use to ensure that variables once assigned cannot be re-assigned?@final@double@protected@private
+When you create a String array like this: “ String[] goldenGirls = new String[4]What will the values be initialized to?@null@“”@0@‘4’ 
+Which of the following statements would create an array named planets with 9 String elements?@String[] planets  = new String[9]@String planets = new Array(9) @String[] planets = new String (9)@Array[] planets = new String [9] 
+What code would get the first item from this array? “String[] reminders = {"Baby", "Years”};”?@ reminder[0]@reminders(0)@reminders{0}@reminders[1]
+Choose the appropriate data type for this value: 1@int@Double@float@String
+Given the declaration : int [ ] ar = {1,2,3,4,5} What is the value of ar[3]?@4@2@3@5
+Choose the appropriate data type for this field: kindOfBird:@String@double@int@ char 
+How is the layout of widgets on a panel specified?@By calling method setLayout@By calling the method setContentPane@Automatically@By inheriting from the main container such as a JFrame or JApplet
+Which one adds the widget mainpanel to an applet in the init method of the applet?@GetContentPane().add(mainPanel)@add(mainPanell);@this.add(mainPanel);@ mainPanel.setVisible(true);
+Choose the appropriate data type for this value:5.5@ Double@boolean@String@int 
+With inheritance, a derived subclass object can directly access any@public superclass member (and protected subclass if its in the same package)@ public or private superclass member@Protected , public or private superclass member@private superclass members
+What does AWT stands for ?@Abstract window toolkit@Adjust window toolkit@Advance window toolkit@None of the choices
