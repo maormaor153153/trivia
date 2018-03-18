@@ -1,4 +1,4 @@
-package com.example.maor.trivia;
+package com.example.maor.trivia.Activity;
 
 /**
  * Created by Maor on 26/02/2018.
@@ -6,6 +6,8 @@ package com.example.maor.trivia;
 import android.app.ProgressDialog;
 import android.support.annotation.VisibleForTesting;
 import android.support.v7.app.AppCompatActivity;
+
+import com.example.maor.trivia.R;
 
 public class BaseActivity extends AppCompatActivity {
 

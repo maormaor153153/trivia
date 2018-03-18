@@ -1,4 +1,4 @@
-package com.example.maor.trivia;
+package com.example.maor.trivia.Animation;
 
 import android.view.animation.Animation;
 import android.view.animation.Transformation;

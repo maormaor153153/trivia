@@ -1,4 +1,4 @@
-package com.example.maor.trivia;
+package com.example.maor.trivia.Activity;
 
 import android.animation.Animator;
 import android.animation.ObjectAnimator;
@@ -21,6 +21,12 @@ import android.widget.Button;
 import android.widget.LinearLayout;
 import android.widget.ProgressBar;
 import android.widget.TextView;
+
+import com.example.maor.trivia.Class.MultipleChoice;
+import com.example.maor.trivia.Class.Question;
+import com.example.maor.trivia.Class.Quiz;
+import com.example.maor.trivia.R;
+import com.example.maor.trivia.TrueFalse;
 
 import java.io.IOException;
 import java.util.ArrayList;
@@ -93,7 +99,7 @@ public class QuickGameActivity extends AppCompatActivity {
 
         Log.d("error","questionsRepo.size"+questionsRepo.size());
         r = new Random();
-        int numOfQuestion = r.nextInt(questionsRepo.size())+1; //TODO:check the +1
+        int numOfQuestion = r.nextInt(questionsRepo.size()); //TODO:check the +1
         displayQuestion(numOfQuestion);
 
 
@@ -127,11 +133,11 @@ public class QuickGameActivity extends AppCompatActivity {
                 if (quizMaster.isCorrect(currentQuestionNum, choice1.getText().toString())){
                     mScore += quizMaster.calculateScore(timeLeft);
                     score.setText("Score: "+ mScore);
-                    setAnimation(v, correctColor);
+                    setAnimationToButtons(v, correctColor);
                     playSound(CORRECT_STR_SOUND);
                 }
                 else{
-                    setAnimation(v, wrongColor);
+                    setAnimationToButtons(v, wrongColor);
                     playSound(WRONG_STR_SOUND);
                 }
                 delayTillNextQuestion();
@@ -149,11 +155,11 @@ public class QuickGameActivity extends AppCompatActivity {
                 if (quizMaster.isCorrect(currentQuestionNum, choice2.getText().toString())){
                     mScore += quizMaster.calculateScore(timeLeft);
                     score.setText("Score: "+ mScore);
-                    setAnimation(v, correctColor);
+                    setAnimationToButtons(v, correctColor);
                     playSound(CORRECT_STR_SOUND);
                 }
-              else{
-                    setAnimation(v, wrongColor);
+                else{
+                    setAnimationToButtons(v, wrongColor);
                     playSound(WRONG_STR_SOUND);
                 }
                 delayTillNextQuestion();
@@ -170,11 +176,11 @@ public class QuickGameActivity extends AppCompatActivity {
                 if (quizMaster.isCorrect(currentQuestionNum, choice3.getText().toString())){
                     mScore += quizMaster.calculateScore(timeLeft);
                     score.setText("Score: "+ mScore);
-                    setAnimation(v, correctColor);
+                    setAnimationToButtons(v, correctColor);
                     playSound(CORRECT_STR_SOUND);
                 }
                 else{
-                    setAnimation(v, wrongColor);
+                    setAnimationToButtons(v, wrongColor);
                     playSound(WRONG_STR_SOUND);
                 }
 
@@ -192,12 +198,12 @@ public class QuickGameActivity extends AppCompatActivity {
                 if (quizMaster.isCorrect(currentQuestionNum, choice4.getText().toString())){
                     mScore += quizMaster.calculateScore(timeLeft);
                     score.setText("Score: "+ mScore);
-                    setAnimation(v,correctColor);
+                    setAnimationToButtons(v,correctColor);
                     playSound(CORRECT_STR_SOUND);
                 }
                 else{
                     playSound(WRONG_STR_SOUND);
-                    setAnimation(v,wrongColor);
+                    setAnimationToButtons(v,wrongColor);
                 }
 
                 delayTillNextQuestion();
@@ -231,7 +237,7 @@ public class QuickGameActivity extends AppCompatActivity {
     }
 
 
-    private void setAnimation(View v, Drawable color) {
+    private void setAnimationToButtons(View v, Drawable color) {
         final Drawable colorToPaint = color;
         if(v instanceof Button){
             final Button btn = (Button)v;
@@ -311,7 +317,6 @@ public class QuickGameActivity extends AppCompatActivity {
     }
 
     private void initTimer() {
-
         timer = new CountDownTimer(10000,1000){
 
             @Override
@@ -322,7 +327,6 @@ public class QuickGameActivity extends AppCompatActivity {
             @Override
             public void onFinish() {
                 displayQuestion(r.nextInt(numOfQuestions));
-
             }
         };
     }
@@ -430,7 +434,7 @@ public class QuickGameActivity extends AppCompatActivity {
 
         textView.setText(str);
 //        Typeface custom_font = Typeface.createFromAsset(getAssets(), "fonts/Sansaul_Petronika.ttf");
- //       textView.setTypeface(custom_font);
+        //       textView.setTypeface(custom_font);
         textView.setTextColor(Color.BLACK);
         textView.setGravity(Gravity.CENTER);
     }
@@ -443,18 +447,18 @@ public class QuickGameActivity extends AppCompatActivity {
                 .setCancelable(false)
                 .setPositiveButton("New Game",
                         new DialogInterface.OnClickListener() {
-                    @Override
-                    public void onClick(DialogInterface dialog, int i) {
-                        startActivity(new Intent(getApplicationContext(),QuickGameActivity.class));
-                    }
-                })
-               .setNegativeButton("Exit",
-            new DialogInterface.OnClickListener() {
-                @Override
-                public void onClick(DialogInterface dialog, int i) {
-                        finish();
-                }
-            });
+                            @Override
+                            public void onClick(DialogInterface dialog, int i) {
+                                startActivity(new Intent(getApplicationContext(),QuickGameActivity.class));
+                            }
+                        })
+                .setNegativeButton("Exit",
+                        new DialogInterface.OnClickListener() {
+                            @Override
+                            public void onClick(DialogInterface dialog, int i) {
+                                finish();
+                            }
+                        });
 
         AlertDialog alertDialog = alertDialogBuilder.create();
         alertDialog.show();

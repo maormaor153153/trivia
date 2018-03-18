@@ -1,4 +1,4 @@
-package com.example.maor.trivia;
+package com.example.maor.trivia.Class;
 
 /**
  * Created by orenshadmi on 07/03/2018.

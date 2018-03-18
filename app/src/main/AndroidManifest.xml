@@ -11,27 +11,33 @@
         android:roundIcon="@mipmap/ic_launcher_round"
         android:supportsRtl="true"
         android:theme="@style/AppTheme">
-
-        <meta-data android:name="com.facebook.sdk.2061365520765006"
+        <meta-data
+            android:name="com.facebook.sdk.2061365520765006"
             android:exported="true"
-            android:value="@string/facebook_app_id"/>
+            android:value="@string/facebook_app_id" />
+
         <activity
             android:name="com.facebook.FacebookActivity"
             android:configChanges="keyboard|keyboardHidden|screenLayout|screenSize|orientation"
             android:label="@string/app_name" />
-        <activity android:name=".HomeActivity">
+        <activity android:name=".Activity.HomeActivity">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
 
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
-        <activity android:name=".MenuActivity" />
-        <activity android:name=".PlayNowActivity" />
-        <activity android:name=".QuickGameActivity" />
-        <activity android:name=".SettingsActivity" />
-        <activity android:name=".SignUpActivity" />
-        <activity android:name=".ProfileActivity"></activity>
+        <activity android:name=".Activity.MenuActivity" />
+        <activity android:name=".Activity.PlayNowActivity" />
+        <activity android:name=".Activity.QuickGameActivity" />
+        <activity android:name=".Activity.SettingsActivity" />
+        <activity android:name=".Activity.SignUpActivity" />
+        <activity android:name=".Activity.ProfileActivity" />
+        <activity android:name=".Activity.statsActivity" />
+        <activity android:name=".Activity.LeaderBoradActivity" />
+        <activity android:name=".Activity.CompeteActivity" />
+        <activity android:name=".SingleWaitingRoomActivity" />
+        <activity android:name=".Activity.WaitingRoomActivity"></activity>
     </application>
 
 </manifest>

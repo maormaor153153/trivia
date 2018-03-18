@@ -6,7 +6,7 @@
     android:layout_height="match_parent"
     android:background="#66c1ff"
 
-    tools:context="com.example.maor.trivia.PlayNowActivity">
+    tools:context="com.example.maor.trivia.Activity.PlayNowActivity">
 
 
 <LinearLayout

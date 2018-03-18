@@ -1,4 +1,4 @@
-package com.example.maor.trivia;
+package com.example.maor.trivia.Class;
 
 import java.util.ArrayList;
 

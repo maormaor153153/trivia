@@ -1,7 +1,9 @@
-package com.example.maor.trivia;
+package com.example.maor.trivia.Class;
 
 import android.content.Context;
 import android.util.Log;
+
+import com.example.maor.trivia.TrueFalse;
 
 import java.io.BufferedReader;
 import java.io.IOException;
@@ -20,10 +22,12 @@ public class Quiz {
     private static final int numOfQuestionsPerGame = 10;
     private int numOfQuestionsAsked;
     int score;
-    boolean isGameOver;
+    boolean isGameOver, isUserTurn, isOpenentTurn;
+
 
     public Quiz(Context context) {
         score = 0;
+        isUserTurn = isOpenentTurn = false;
         numOfQuestionsAsked = 0;
         isGameOver = false;
         questions = new ArrayList<>();
@@ -141,6 +145,22 @@ public class Quiz {
         return false;
 
 
+    }
+
+    public void setUserTurn(boolean userTurn) {
+        isUserTurn = userTurn;
+    }
+
+    public void setOpenentTurn(boolean openentTurn) {
+        isOpenentTurn = openentTurn;
+    }
+
+    public boolean isUserTurn() {
+        return isUserTurn;
+    }
+
+    public boolean isOpenentTurn() {
+        return isOpenentTurn;
     }
 
     public int getScore() {

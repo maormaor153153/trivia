@@ -1,10 +1,12 @@
 package com.example.maor.trivia;
 
+import com.example.maor.trivia.Class.Question;
+
 /**
  * Created by orenshadmi on 07/03/2018.
  */
 
-public class TrueFalse extends Question{
+public class TrueFalse extends Question {
 
 
     private String answer;
@@ -19,7 +21,6 @@ public class TrueFalse extends Question{
         str.replaceAll("\\s+","");
         if( str.toLowerCase().equals(answer.toLowerCase()))
             return true;
-
         return false;
     }
 

@@ -6,7 +6,7 @@
     android:layout_height="match_parent"
     android:background="#66c1ff"
 
-    tools:context="com.example.maor.trivia.MenuActivity">
+    tools:context="com.example.maor.trivia.Activity.MenuActivity">
 
     <LinearLayout
         android:layout_width="wrap_content"
@@ -14,20 +14,17 @@
         android:layout_alignParentTop="true"
         android:layout_centerInParent="true"
         android:layout_marginTop="40dp"
-        android:layout_height="wrap_content">
+        android:layout_height="wrap_content"
+        android:id="@+id/linearLayout">
 
-        <Button
+
+        <ImageView
             android:id="@+id/image_profile"
-            android:textColor="#FFFFFF"
-            android:textSize="20sp"
-            android:layout_width="60dp"
-            android:layout_height="60dp"
-            android:background="@drawable/buttonshape"
-            android:shadowColor="#A8A8A8"
-            android:shadowDx="0"
-            android:shadowDy="0"
-            android:shadowRadius="5"
-            />
+            android:layout_width="match_parent"
+            android:layout_height="88dp"
+            android:layout_alignParentStart="true"
+            android:layout_below="@+id/linearLayout"
+            app:srcCompat="@drawable/buttonshape" />
 
         <TextView
             android:layout_marginTop="5sp"
@@ -36,6 +33,8 @@
             android:layout_height="wrap_content"
             android:text="   Edit profile"
             android:textSize="10sp"/>
+
+
 
 
     </LinearLayout>
@@ -95,8 +94,6 @@
 
 
     </RelativeLayout>
-
-
 
 
 
