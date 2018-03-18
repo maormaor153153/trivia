@@ -9,10 +9,12 @@ import android.widget.ArrayAdapter;
 import android.widget.ListView;
 import android.widget.Toast;
 
+import com.example.maor.trivia.Class.User;
 import com.example.maor.trivia.R;
 import com.example.maor.trivia.Class.UserInformation;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
+import com.google.firebase.database.ChildEventListener;
 import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
@@ -20,6 +22,8 @@ import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.ValueEventListener;
 
 import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.List;
 
 /**
  * Created by User on 2/8/2017.
@@ -35,7 +39,7 @@ public class statsActivity extends AppCompatActivity {
     private DatabaseReference myRef;
     private String userID;
     private ListView mListView;
-
+private int  flagForStatsOpen;
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -53,21 +57,10 @@ public class statsActivity extends AppCompatActivity {
 
 
 
-        /*
-        HashMap forstats = new HashMap();
-        // HashMap newElevetor = new HashMap();
-        myRef = FirebaseDatabase.getInstance().getReference("stats");
 
-        forstats.put("Email", mAuth.getCurrentUser().getEmail());
-        forstats.put("Total_games_played", 0);
-        forstats.put("Win", 0);
-        forstats.put("Lose", 0);
-        forstats.put("High_Score", 0);
-        myRef.push().setValue(forstats);
 
-        //if (singleSnapshot.child("Email").getValue().toString() == mAuth.getCurrentUser().getEmail())
+        createStatsForUser();
 
-*/
 
         mAuthListener = new FirebaseAuth.AuthStateListener() {
             @Override
@@ -87,7 +80,13 @@ public class statsActivity extends AppCompatActivity {
         };
 
 
-        myRef.child("stats").addValueEventListener(new ValueEventListener() {
+
+
+
+
+
+
+        myRef.child("stats").child(userID).addValueEventListener(new ValueEventListener() {
             @Override
             public void onDataChange(DataSnapshot dataSnapshot) {
                 showData(dataSnapshot);
@@ -101,14 +100,71 @@ public class statsActivity extends AppCompatActivity {
 
     }
 
+    private void createStatsForUser() {
+
+         flagForStatsOpen = 1;
+        myRef.child("stats").child(userID).addChildEventListener(new ChildEventListener() {
+            @Override
+            public void onChildAdded(DataSnapshot dataSnapshot, String s) {
+                for (DataSnapshot ds : dataSnapshot.getChildren()) {
+                        if (ds.child("Email").getValue().toString() == mAuth.getCurrentUser().getEmail())
+                        {
+                            flagForStatsOpen =0;
+                            break;
+                        }
+
+                }
+
+            }
+
+            @Override
+            public void onChildChanged(DataSnapshot dataSnapshot, String s) {
+
+            }
+
+            @Override
+            public void onChildRemoved(DataSnapshot dataSnapshot) {
+
+            }
+
+            @Override
+            public void onChildMoved(DataSnapshot dataSnapshot, String s) {
+
+            }
+
+            @Override
+            public void onCancelled(DatabaseError databaseError) {
+
+            }
+        });
+
+
+        if(flagForStatsOpen == 1)
+        {
+            HashMap forstats = new HashMap();
+            myRef = FirebaseDatabase.getInstance().getReference("stats");
+            forstats.put("Email", mAuth.getCurrentUser().getEmail());
+            forstats.put("Total_games_played", 0);
+            forstats.put("Win", 0);
+            forstats.put("Lose", 0);
+            forstats.put("High_Score", 0);
+            myRef.push().setValue(forstats);
+        }
+
+
+
+
+
+    }
 
     private void showData(DataSnapshot dataSnapshot) {
 
             for (DataSnapshot ds : dataSnapshot.getChildren()) {
             UserInformation uInfo = new UserInformation();
-            uInfo.setTotal_games_played(ds.child(userID).getValue(UserInformation.class).getTotal_games_played()); //set the name
-            uInfo.setEmail(ds.child(userID).getValue(UserInformation.class).getEmail()); //set the email
-            uInfo.setWin(ds.child(userID).getValue(UserInformation.class).getWin()); //set the phone_num
+
+            uInfo.setTotal_games_played(ds.child("Total_games_played").getValue(UserInformation.class).getTotal_games_played()); //set the name
+            uInfo.setEmail(ds.child("email").getValue(UserInformation.class).getEmail()); //set the email
+            uInfo.setWin(ds.child("Win").getValue(UserInformation.class).getWin()); //set the phone_num
 
 
             ArrayList<String> array = new ArrayList<>();

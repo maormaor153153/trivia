@@ -10,9 +10,9 @@
         android:text="Leader board"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:id="@+id/tvUserInfo"/>
+        android:id="@+id/tvUserInfoLeaderBoard"/>
     <ListView
-        android:id="@+id/listview"
+        android:id="@+id/listviewLeaderBoard"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         />

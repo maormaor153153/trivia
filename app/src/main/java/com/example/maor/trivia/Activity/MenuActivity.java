@@ -68,6 +68,13 @@ public class MenuActivity extends AppCompatActivity {
             }
         });
 
+        Button leaderboard = (Button) findViewById(R.id.leaderboard);
+        leaderboard.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                startActivity(new Intent(getApplicationContext(), LeaderBoradActivity.class));
+            }
+        });
 
 
     }

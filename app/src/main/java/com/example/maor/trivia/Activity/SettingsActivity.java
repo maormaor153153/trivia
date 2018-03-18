@@ -110,6 +110,8 @@ public class SettingsActivity extends BaseActivity implements
                         updateUI(null);
                         Intent intent = new Intent(SettingsActivity.this, HomeActivity.class);
                         startActivity(intent);
+                        ourInstance.finish();
+
                     }
                 });
     }
@@ -136,6 +138,8 @@ public class SettingsActivity extends BaseActivity implements
                             // user is now signed out
                             startActivity(new Intent(SettingsActivity.this, HomeActivity.class));
                             finish();
+                            ourInstance.finish();
+
                         }
                     });
         }
