@@ -195,7 +195,7 @@ public class CompeteActivity extends AppCompatActivity {
     @Override
     protected void onStop() {
         super.onStop();
-        gameRoomRef.removeValue();
+       // gameRoomRef.removeValue();
     }
 
     @Override
@@ -255,10 +255,12 @@ public class CompeteActivity extends AppCompatActivity {
 
 
 
-                        player1 =  dataSnapshot.child(PLAYER1_FB_REF).getValue(com.example.maor.trivia.Activity.User.class);
-                        player2 =  dataSnapshot.child(PLAYER2_FB_REF).getValue(com.example.maor.trivia.Activity.User.class);
+                        player1 =  dataSnapshot.child("player1").getValue(com.example.maor.trivia.Activity.User.class);
+                        player2 =  dataSnapshot.child("player2").getValue(com.example.maor.trivia.Activity.User.class);
 
-                        if(!isFirstChoosen & currentFirebaseUser.getUid().equals(player1.getId())){
+                        if(!isFirstChoosen &
+                                currentFirebaseUser.getUid().
+                                        equals(player1.getId())){
                             isFirstChoosen = true;
                             whoPlayFirst();
                         }

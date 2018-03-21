@@ -8,6 +8,8 @@ import android.widget.Button;
 import android.widget.TextView;
 
 import com.example.maor.trivia.R;
+import com.google.firebase.database.DatabaseReference;
+import com.google.firebase.database.FirebaseDatabase;
 
 public class resultActivity extends AppCompatActivity {
 
@@ -15,10 +17,12 @@ public class resultActivity extends AppCompatActivity {
     TextView mstats;
     Button mbtn;
 
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_result);
+
 
 
         Intent intent = getIntent();
@@ -41,12 +45,17 @@ public class resultActivity extends AppCompatActivity {
             }
         });
 
+
     }
     public void onBackPressed()
     {
         Intent intent = new Intent(resultActivity.this, MenuActivity.class);
         startActivity(intent);
         finish();
+
+    }
+    protected void onStop() {
+        super.onStop();
 
     }
 }
