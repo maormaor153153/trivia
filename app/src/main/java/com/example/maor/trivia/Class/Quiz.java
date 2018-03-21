@@ -9,6 +9,7 @@ import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStreamReader;
 import java.util.ArrayList;
+import java.util.Random;
 
 /**
  * Created by orenshadmi on 07/03/2018.
@@ -90,8 +91,9 @@ public class Quiz {
                 answer.replaceAll("\\s+","");
 
                 ArrayList<String> choices;
-                choices = addToArrayList(answer, choice1, choice2, choice3);
 
+                choices = addToArrayList(answer, choice1, choice2, choice3);
+//                initMCQuestion(choices);
                 MultipleChoice mcQuestion = new MultipleChoice(question,choices,answer);
                 questions.add(mcQuestion);
 
@@ -225,5 +227,48 @@ public class Quiz {
     public int calculateScore(long timeLeft) {
         score = (int) (EASY_SCORE * timeLeft);
         return score;
+    }
+
+    private void initMCQuestion(ArrayList<String> options) {
+
+
+
+        Random r = new Random();
+        int i = 0;
+        String[] arr = {null, null, null, null};
+        int []arrTocheck = {0,0,0,0};
+
+
+        //Random place for the answers
+        do {
+            int index = r.nextInt(options.size());
+            if(arrTocheck[index] == 0){
+                arrTocheck[index] = 1;
+                String choice = options.get(index);
+                arr[i] = choice;
+                i++;
+            }
+        } while (!isAllPlaced(arrTocheck));
+
+
+        setOptionToArrayList(options, arr);
+
+
+    }
+
+    private void setOptionToArrayList(ArrayList<String> options, String[] arr) {
+        options.set(0,arr[0]);
+        options.set(1,arr[1]);
+        options.set(2,arr[2]);
+        options.set(3,arr[3]);
+    }
+
+
+    private boolean isAllPlaced(int[] arr) {
+        for(int i = 0 ; i < arr.length ; i++){
+            if(arr[i] == 0)
+                return false;
+        }
+        return true;
     }
 }

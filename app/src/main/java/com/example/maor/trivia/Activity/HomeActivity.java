@@ -11,12 +11,7 @@ import android.widget.ProgressBar;
 import android.widget.Toast;
 
 import com.example.maor.trivia.R;
-import com.facebook.AccessToken;
-import com.facebook.CallbackManager;
-import com.facebook.FacebookCallback;
-import com.facebook.FacebookException;
-import com.facebook.login.LoginResult;
-import com.facebook.login.widget.LoginButton;
+
 import com.google.android.gms.auth.api.signin.GoogleSignIn;
 import com.google.android.gms.auth.api.signin.GoogleSignInAccount;
 import com.google.android.gms.auth.api.signin.GoogleSignInClient;
@@ -43,9 +38,9 @@ public class HomeActivity extends BaseActivity implements
     private FirebaseAuth mAuth;
     // [END declare_auth]
     private GoogleSignInClient mGoogleSignInClient;
-    private CallbackManager callbackManager;
-
-    LoginButton facebookSignUp ;
+//    private CallbackManager callbackManager;
+//
+//    LoginButton facebookSignUp ;
     EditText editTextEmail, editTextPassword;
     ProgressBar progressBar;
 
@@ -75,7 +70,7 @@ public class HomeActivity extends BaseActivity implements
         // [START initialize_auth]
         mAuth = FirebaseAuth.getInstance();
         // [END initialize_auth]
-        callbackManager = CallbackManager.Factory.create();
+//        callbackManager = CallbackManager.Factory.create();
 
     }
     @Override
@@ -127,7 +122,7 @@ public class HomeActivity extends BaseActivity implements
                 // [END_EXCLUDE]
             }
         }
-        callbackManager.onActivityResult(requestCode, resultCode, data);
+//        callbackManager.onActivityResult(requestCode, resultCode, data);
 
 
 

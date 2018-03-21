@@ -2,6 +2,8 @@ package com.example.maor.trivia.Class;
 
 import com.example.maor.trivia.Activity.User;
 
+import java.util.ArrayList;
+
 /**
  * Created by orenshadmi on 18/03/2018.
  */
@@ -14,6 +16,7 @@ public class GameRoom {
     String whoPlay;
     Long optionClicked;
     boolean isTimeStopped;
+    ArrayList<String> options ;
 
 
     public GameRoom(User player1, User player2, String gameRoomId, int numOfQuestion) {
@@ -24,8 +27,16 @@ public class GameRoom {
         this.whoPlay = null;
         this.optionClicked = Long.valueOf(-1);
         this.isTimeStopped = false;
+        this.options = null;
     }
 
+    public ArrayList<String> getOptions() {
+        return options;
+    }
+
+    public void setOptions(ArrayList<String> options) {
+        this.options = options;
+    }
 
     public boolean isTimeStopped() {
         return isTimeStopped;

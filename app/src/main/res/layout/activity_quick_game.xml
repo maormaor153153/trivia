@@ -40,6 +40,8 @@
 
 
         <Button
+            android:textAllCaps="false"
+            style="@style/Widget.AppCompat.Button.Colored"
             android:id="@+id/choice1"
             android:layout_width="350sp"
             android:layout_height="60sp"
@@ -49,6 +51,8 @@
             android:visibility="invisible"/>
 
         <Button
+            android:textAllCaps="false"
+            style="@style/Widget.AppCompat.Button.Colored"
             android:id="@+id/choice2"
             android:layout_width="350sp"
             android:layout_height="60sp"
@@ -58,6 +62,8 @@
             android:visibility="invisible"/>
 
         <Button
+            android:textAllCaps="false"
+            style="@style/Widget.AppCompat.Button.Colored"
             android:id="@+id/choice3"
             android:layout_width="350sp"
             android:layout_height="60sp"
@@ -70,6 +76,8 @@
 
 
         <Button
+            android:textAllCaps="false"
+            style="@style/Widget.AppCompat.Button.Colored"
             android:id="@+id/choice4"
             android:layout_width="350sp"
             android:layout_height="60sp"

@@ -16,6 +16,8 @@
     android:layout_centerInParent="true">
 
     <Button
+        android:textAllCaps="false"
+        style="@style/Widget.AppCompat.Button.Colored"
         android:id="@+id/quickGame"
         android:layout_width="150dp"
         android:layout_height="90dp"
@@ -24,6 +26,8 @@
         android:layout_marginBottom="5dp"/>
 
     <Button
+        android:textAllCaps="false"
+        style="@style/Widget.AppCompat.Button.Colored"
         android:id="@+id/compete"
         android:layout_width="150dp"
         android:layout_height="90dp"

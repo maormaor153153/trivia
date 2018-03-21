@@ -14,6 +14,7 @@ import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.util.Log;
+import android.view.KeyEvent;
 import android.view.View;
 import android.view.animation.DecelerateInterpolator;
 import android.widget.Button;
@@ -104,6 +105,7 @@ public class CompeteActivity extends AppCompatActivity {
     private boolean isFirstChoosen;
     private boolean isqQuestionChanged;
     private String playerToStart;
+    private boolean isArrayListChanged;
 
 
     @Override
@@ -113,6 +115,7 @@ public class CompeteActivity extends AppCompatActivity {
         gameRoomList = new ArrayList<>();
 
 
+        isArrayListChanged = false;
         Intent intent = getIntent();
         String id = intent.getStringExtra("WaitingRoom");
 
@@ -171,6 +174,9 @@ public class CompeteActivity extends AppCompatActivity {
 
 
 
+
+
+
         forSaveData = new ArrayList<>();
         forSaveDataNumber = new ArrayList<>();
 
@@ -185,19 +191,39 @@ public class CompeteActivity extends AppCompatActivity {
 
 
 
+
+    @Override
+    protected void onStop() {
+        super.onStop();
+        gameRoomRef.removeValue();
+    }
+
+    @Override
+    protected void onDestroy() {
+        super.onDestroy();
+        gameRoomRef.removeValue();
+    }
+
     @Override
     protected void onStart() {
         super.onStart();
 
-        waitingRoomRef.addValueEventListener(new ValueEventListener() {
+        waitingRoomRef.addListenerForSingleValueEvent(new ValueEventListener() {
             @Override
             public void onDataChange(DataSnapshot dataSnapshot) {
 
                 gameRoomid = (String)dataSnapshot.child("Game Room id").getValue();
 
+                if(gameRoomid != null) {
+                    gameRoomRef = database.getReference("Game Room").child(gameRoomid);
+                }
 
-                gameRoomRef = database.getReference("Game Room").child(gameRoomid);
+
+
+
+
             }
+
 
 
             @Override
@@ -211,6 +237,8 @@ public class CompeteActivity extends AppCompatActivity {
 
     }
 
+
+
     private void getQuestionNum() {
         handler.postDelayed(new Runnable() {
             @Override
@@ -218,6 +246,9 @@ public class CompeteActivity extends AppCompatActivity {
                 gameRoomRef.addValueEventListener(new ValueEventListener() {
                     @Override
                     public void onDataChange(DataSnapshot dataSnapshot) {
+
+
+
 
                         Long n = (Long) dataSnapshot.child(NUM_OF_QUESTION_TO_DISPLAY_FB_REF).getValue();
 
@@ -239,6 +270,12 @@ public class CompeteActivity extends AppCompatActivity {
                             setPlayerTurn(playerToStart);
                         }
 
+                        ArrayList<String> arrayList = (ArrayList<String>) dataSnapshot.child("options").getValue();
+                        if(arrayList != null && !isArrayListChanged){
+                            isArrayListChanged = true;
+                            setTextToOptionsButtons(arrayList);
+                        }
+
                         if(playerToStart != null ) {
                             if (n.intValue() != currentQuestionNum) {String name = (String) dataSnapshot.child(playerToStart).child("name").getValue();
 //                             currentQuestionNum = numOfQuestionToDisplay;
@@ -246,6 +283,8 @@ public class CompeteActivity extends AppCompatActivity {
                                 displayQuestion(s, playerToStart, name);
                             }
                         }
+
+
 
 
 
@@ -410,6 +449,7 @@ public class CompeteActivity extends AppCompatActivity {
         r = new Random();
         int n = r.nextInt(2);
         if(currentFirebaseUser.getUid().equals(player1.getId())) {
+            waitingRoomRef.removeValue();
             if (n == 0) {
                 gameRoomRef.child(WHO_PLAY_FB_REF).setValue(PLAYER1_FB_REF);
             } else {
@@ -586,6 +626,7 @@ public class CompeteActivity extends AppCompatActivity {
             }
             //Multiple choice question
             else if (question instanceof MultipleChoice && !(question.isAsked())) {
+                isArrayListChanged = false;
                 initMCQuestion(((MultipleChoice) question).getmChoices());
             }
 
@@ -756,43 +797,42 @@ public class CompeteActivity extends AppCompatActivity {
     private void initMCQuestion(ArrayList<String> options) {
         setMcOptions();
 
-
-//        r = new Random();
-//        int i = 0;
         String[] arr = {null, null, null, null};
-//        int []arrTocheck = {0,0,0,0};
+        if(currentFirebaseUser.getUid().equals(player1.getId())) {
+
+            setMcOptions();
 
 
-        //Random place for the answers
-//        do {
-//            int index = r.nextInt(options.size());
-//            if(arrTocheck[index] == 0){
-//                arrTocheck[index] = 1;
-//                String choice = options.get(index);
-//                arr[i] = choice;
-//                i++;
-//            }
-//        } while (!isAllPlaced(arrTocheck));
+            r = new Random();
+            int i = 0;
+
+            int[] arrTocheck = {0, 0, 0, 0};
 
 
-        for(int i = 0 ; i< options.size(); i ++){
-            arr[i]= options.get(i);
+            //Random place for the answers
+            do {
+                int index = r.nextInt(options.size());
+                if (arrTocheck[index] == 0) {
+                    arrTocheck[index] = 1;
+                    String choice = options.get(index);
+                    arr[i] = choice;
+                    i++;
+                }
+            } while (!isAllPlaced(arrTocheck));
+
+            ArrayList<String> arrayList = setArrayToList(arr);
+            gameRoomRef.child("options").setValue(arrayList);
         }
-        setTextToOptionsButtons(arr);
+
     }
 
-    private void setTextToOptionsButtons(String[] arr) {
-        choice1.setText(arr[0]);
-        choice2.setText(arr[1]);
-        choice3.setText(arr[2]);
-        choice4.setText(arr[3]);
-    }
+    private ArrayList<String> setArrayToList(String[] arr) {
+        ArrayList<String> arrayList = new ArrayList<>();
+        for(int i = 0 ; i < arr.length ; i++){
+            arrayList.add(arr[i]);
+        }
 
-    private void setMcOptions() {
-        choice1.setVisibility(View.VISIBLE);
-        choice2.setVisibility(View.VISIBLE);
-        choice3.setVisibility(View.VISIBLE);
-        choice4.setVisibility(View.VISIBLE);
+        return arrayList;
     }
 
     private boolean isAllPlaced(int[] arr) {
@@ -802,6 +842,22 @@ public class CompeteActivity extends AppCompatActivity {
         }
         return true;
     }
+
+    private void setTextToOptionsButtons(ArrayList<String> arr) {
+        choice1.setText(arr.get(0));
+        choice2.setText(arr.get(1));
+        choice3.setText(arr.get(2));
+        choice4.setText(arr.get(3));
+    }
+
+    private void setMcOptions() {
+        choice1.setVisibility(View.VISIBLE);
+        choice2.setVisibility(View.VISIBLE);
+        choice3.setVisibility(View.VISIBLE);
+        choice4.setVisibility(View.VISIBLE);
+    }
+
+
 
     private void initTFQuestion() {
         r = new Random();
@@ -878,22 +934,27 @@ public class CompeteActivity extends AppCompatActivity {
 
 
                 if (mAuth.getCurrentUser().getDisplayName().equals(forSaveData.get(0))) {
-                    String highScoreFromDataBase0 = String.valueOf(dataSnapshot.child("High_Score").getValue());
-                    int highScoreFromDataBaseNumber0 = Integer.parseInt(highScoreFromDataBase0);
-                    if (highScoreFromDataBaseNumber0 < forSaveDataNumber.get(0)) // highScoreFromDataBaseNumber < theScoreInTheGame(the value for this game)
-                    {
-                        ///change the score to string
-                        dataSnapshot.getRef().child("High_Score").setValue(forSaveDataNumber.get(0));
+                    Object highScoreFromDataBase0 = dataSnapshot.child("High_Score").getValue();
+                    if(highScoreFromDataBase0 != null) {
+
+                        int highScoreFromDataBaseNumber0 = Integer.parseInt(highScoreFromDataBase0.toString());
+                        if (highScoreFromDataBaseNumber0 < forSaveDataNumber.get(0)) // highScoreFromDataBaseNumber < theScoreInTheGame(the value for this game)
+                        {
+                            ///change the score to string
+                            dataSnapshot.getRef().child("High_Score").setValue(forSaveDataNumber.get(0));
+                        }
                     }
                 }
 
                 if (mAuth.getCurrentUser().getDisplayName().equals(forSaveData.get(1))) {
                     String highScoreFromDataBase1 = String.valueOf(dataSnapshot.child("High_Score").getValue());
-                    int highScoreFromDataBaseNumber1 = Integer.parseInt(highScoreFromDataBase1);
-                    if (highScoreFromDataBaseNumber1 < forSaveDataNumber.get(1)) // highScoreFromDataBaseNumber < theScoreInTheGame(the value for this game)
-                    {
-                        ///change the score to string
-                        dataSnapshot.getRef().child("High_Score").setValue(forSaveDataNumber.get(1));
+                    if(highScoreFromDataBase1 != null) {
+                        int highScoreFromDataBaseNumber1 = Integer.parseInt(highScoreFromDataBase1);
+                        if (highScoreFromDataBaseNumber1 < forSaveDataNumber.get(1)) // highScoreFromDataBaseNumber < theScoreInTheGame(the value for this game)
+                        {
+                            ///change the score to string
+                            dataSnapshot.getRef().child("High_Score").setValue(forSaveDataNumber.get(1));
+                        }
                     }
                 }
 
@@ -1001,7 +1062,7 @@ public class CompeteActivity extends AppCompatActivity {
             if (forSaveDataNumber.get(0) > forSaveDataNumber.get(1)) {
                 Intent intent = new Intent(CompeteActivity.this, resultActivity.class);
 
-                intent.putExtra("status", "Your Win");
+                intent.putExtra("status", "You Win");
 
                         String Builder = Integer.toString(forSaveDataNumber.get(0));
                 intent.putExtra(SCORE_FB_REF, Builder);
@@ -1023,7 +1084,7 @@ public class CompeteActivity extends AppCompatActivity {
                 Intent intent = new Intent(CompeteActivity.this, resultActivity.class);
                 String Builder = Integer.toString(forSaveDataNumber.get(1));
 
-                intent.putExtra("status", "Your Win");
+                intent.putExtra("status", "You Win");
                 intent.putExtra(SCORE_FB_REF, Builder);
                 startActivity(intent);
             }
