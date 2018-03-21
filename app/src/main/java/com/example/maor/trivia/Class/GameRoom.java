@@ -1,5 +1,7 @@
 package com.example.maor.trivia.Class;
 
+import com.example.maor.trivia.Activity.User;
+
 /**
  * Created by orenshadmi on 18/03/2018.
  */
@@ -8,27 +10,48 @@ public class GameRoom {
     private User player1;
     private User player2;
     String gameRoomId;
-    Question questionDisplayed;
-    Boolean isPlayer1Turn;
+    int numOfQuestionToDisplay;
+    String whoPlay;
+    Long optionClicked;
+    boolean isTimeStopped;
 
-    public GameRoom(User player1, User player2, String gameRoomId) {
+
+    public GameRoom(User player1, User player2, String gameRoomId, int numOfQuestion) {
         this.player1 = player1;
         this.player2 = player2;
         this.gameRoomId = gameRoomId;
+        this.numOfQuestionToDisplay =numOfQuestion;
+        this.whoPlay = null;
+        this.optionClicked = Long.valueOf(-1);
+        this.isTimeStopped = false;
     }
 
-    public GameRoom(){
 
+    public boolean isTimeStopped() {
+        return isTimeStopped;
+    }
+
+    public void setTimeStopped(boolean timeStopped) {
+        isTimeStopped = timeStopped;
+    }
+
+    public String getWhoPlay() {
+        return whoPlay;
+    }
+
+    public Long getOptionClicked() {
+        return optionClicked;
+    }
+
+    public void setWhoPlay(String whoPlay) {
+        this.whoPlay = whoPlay;
+    }
+
+    public void setOptionClicked(Long optionClicked) {
+        this.optionClicked = optionClicked;
     }
 
 
-    public Boolean getPlayer1Turn() {
-        return isPlayer1Turn;
-    }
-
-    public void setPlayer1Turn(Boolean player1Turn) {
-        isPlayer1Turn = player1Turn;
-    }
 
     public void setPlayer1(User player1) {
         this.player1 = player1;
@@ -54,11 +77,11 @@ public class GameRoom {
         return gameRoomId;
     }
 
-    public Question getQuestionDisplayed() {
-        return questionDisplayed;
+    public int getNumOfQuestionToDisplay() {
+        return numOfQuestionToDisplay;
     }
 
-    public void setQuestionDisplayed(Question questionDisplayed) {
-        this.questionDisplayed = questionDisplayed;
+    public void setNumOfQuestionToDisplay(int numOfQuestionToDisplay) {
+        this.numOfQuestionToDisplay = numOfQuestionToDisplay;
     }
 }

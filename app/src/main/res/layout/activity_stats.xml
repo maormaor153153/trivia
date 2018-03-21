@@ -1,22 +1,132 @@
 <?xml version="1.0" encoding="utf-8"?>
-<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
     android:orientation="vertical"
     android:layout_width="match_parent"
+    android:background="@drawable/shape"
+
     android:layout_height="match_parent">
 
     <TextView
-        android:textAlignment="center"
-        android:textSize="25sp"
-        android:text="User Information"
+        android:id="@+id/stats"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:id="@+id/tvUserInfo"/>
+        android:gravity="center"
+        android:textSize="40dp"
+        android:text="stats"/>
 
-    <ListView
-        android:id="@+id/listview"
+
+    <TextView
+        android:id="@+id/totalGame"
         android:layout_width="match_parent"
-        android:layout_height="match_parent"
-       />
+        android:layout_height="wrap_content"
+        android:gravity="center"
+        android:layout_below="@+id/stats"
+        android:textSize="20dp"
+        android:text="total game"/>
 
 
-</LinearLayout>
+    <TextView
+
+        android:id="@+id/totalGameNumber"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_below="@id/totalGame"
+        android:textSize="20dp"
+        android:gravity="center"
+        android:text="0"/>
+
+    <TextView
+        android:id="@+id/win"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_alignParentStart="true"
+        android:layout_below="@+id/totalGameNumber"
+        android:layout_marginTop="26dp"
+        android:gravity="center"
+        android:text="win"
+        android:textSize="20dp" />
+
+
+    <TextView
+
+        android:id="@+id/winNubmer"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_below="@id/win"
+        android:textSize="20dp"
+        android:gravity="center"
+        android:text="0"/>
+
+
+    <TextView
+        android:id="@+id/lose"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_alignParentStart="true"
+        android:layout_below="@+id/winNubmer"
+        android:layout_marginTop="38dp"
+        android:gravity="center"
+        android:text="lose number"
+        android:textSize="20dp" />
+
+
+    <TextView
+
+        android:id="@+id/loseNumber"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_below="@id/lose"
+        android:textSize="20dp"
+        android:gravity="center"
+        android:text="0"/>
+
+
+    <TextView
+        android:id="@+id/highScore"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_alignParentStart="true"
+        android:layout_below="@+id/loseNumber"
+        android:layout_marginTop="51dp"
+        android:gravity="center"
+        android:text="high Score"
+        android:textSize="20dp" />
+
+
+    <TextView
+
+        android:id="@+id/highScoreNumber"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_below="@id/highScore"
+        android:textSize="20dp"
+        android:gravity="center"
+        android:text="0"/>
+
+    <TextView
+        android:id="@+id/email1"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_alignParentStart="true"
+        android:layout_below="@+id/highScoreNumber"
+        android:layout_marginTop="51dp"
+        android:gravity="center"
+        android:text="Email"
+        android:textSize="20dp" />
+
+
+    <TextView
+
+        android:id="@+id/EmailNumber"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_below="@id/email1"
+        android:textSize="20dp"
+        android:gravity="center"
+        android:text="0"/>
+
+
+
+</RelativeLayout>
+

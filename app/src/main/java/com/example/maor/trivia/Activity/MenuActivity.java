@@ -31,6 +31,8 @@ public class MenuActivity extends AppCompatActivity {
             @Override
             public void onClick(View view) {
                 startActivity(new Intent(getApplicationContext(), PlayNowActivity.class));
+                overridePendingTransition(R.anim.fui_slide_in_right, R.anim.fui_slide_out_left);
+
             }
         });
 
@@ -39,6 +41,8 @@ public class MenuActivity extends AppCompatActivity {
             @Override
             public void onClick(View view) {
                 startActivity(new Intent(getApplicationContext(), SettingsActivity.class));
+                overridePendingTransition(R.anim.fui_slide_in_right, R.anim.fui_slide_out_left);
+
             }
         });
 
@@ -48,6 +52,8 @@ public class MenuActivity extends AppCompatActivity {
             @Override
             public void onClick(View view) {
                 startActivity(new Intent(getApplicationContext(), ProfileActivity.class));
+                overridePendingTransition(R.anim.fui_slide_in_right, R.anim.fui_slide_out_left);
+
             }
         });
 
@@ -57,6 +63,8 @@ public class MenuActivity extends AppCompatActivity {
             @Override
             public void onClick(View view) {
                 startActivity(new Intent(getApplicationContext(), ProfileActivity.class));
+                overridePendingTransition(R.anim.fui_slide_in_right, R.anim.fui_slide_out_left);
+
             }
         });
 
@@ -65,6 +73,8 @@ public class MenuActivity extends AppCompatActivity {
             @Override
             public void onClick(View view) {
                 startActivity(new Intent(getApplicationContext(), statsActivity.class));
+                overridePendingTransition(R.anim.fui_slide_in_right, R.anim.fui_slide_out_left);
+
             }
         });
 
@@ -73,6 +83,8 @@ public class MenuActivity extends AppCompatActivity {
             @Override
             public void onClick(View view) {
                 startActivity(new Intent(getApplicationContext(), LeaderBoradActivity.class));
+                overridePendingTransition(R.anim.fui_slide_in_right, R.anim.fui_slide_out_left);
+
             }
         });
 
@@ -82,15 +94,6 @@ public class MenuActivity extends AppCompatActivity {
         public void onStart() {
             ImageView imageView3 = findViewById(R.id.imageView);
             super.onStart();
-
-
-         if(imageView3 != null)
-                Glide.with(this)
-                        .load(user.getPhotoUrl().toString())
-                        .into(imageView3);
-
-
-
 
         }
 

@@ -1,0 +1,5 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <item name="number1Score" type="id">number1Score</item>
+    <item name="listviewLeader" type="id">99</item>
+</resources>

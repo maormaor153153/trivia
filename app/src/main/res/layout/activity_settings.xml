@@ -9,64 +9,31 @@
     tools:context="com.example.maor.trivia.Activity.SettingsActivity">
 
 
-    <TextView
-        android:id="@+id/textGameSounds"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:layout_alignParentStart="true"
-        android:layout_alignParentTop="true"
-        android:layout_marginTop="94dp"
-        android:gravity="center"
-        android:text="@string/gameSounds"
-        android:textSize="30dp" />
-
-    <ToggleButton
-        android:id="@+id/toggleButton"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_below="@+id/textGameSounds"
-        android:layout_centerHorizontal="true"
-        android:text="ToggleButton"
-        />
-
 
     <TextView
-        android:id="@+id/textVibrate"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_alignParentStart="true"
-        android:layout_below="@+id/toggleButton"
+        android:textSize="30dp"
         android:gravity="center"
-        android:text="@string/vibrate"
-        android:textSize="30dp" />
-
-    <ToggleButton
-        android:id="@+id/toggleButton2"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_alignStart="@+id/toggleButton"
-        android:layout_below="@+id/textVibrate"
-        android:text="ToggleButton" />
-
+        android:text="Settings"/>
 
     <Button
         android:id="@+id/logOutForGoolge"
-        android:layout_width="wrap_content"
+        android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_below="@+id/toggleButton2"
-        android:layout_centerHorizontal="true"
         android:layout_marginTop="71dp"
-        android:background="@drawable/buttonshape"
+        android:background="@drawable/red"
         android:shadowColor="#A8A8A8"
         android:text="@string/LogOutForGoogle" />
 
     <Button
         android:id="@+id/logOutManual"
-        android:layout_width="wrap_content"
+        android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_alignEnd="@+id/logOutForGoolge"
         android:layout_below="@+id/logOutForGoolge"
-        android:background="@drawable/buttonshape"
+        android:layout_marginTop="26dp"
+        android:background="@drawable/shape"
         android:shadowColor="#A8A8A8"
         android:text="@string/LogOutFromManual" />
 

@@ -10,12 +10,72 @@
       "client_info": {
         "mobilesdk_app_id": "1:126624556212:android:ed9f64f85f2ac8f3",
         "android_client_info": {
+          "package_name": "com.trivia.android"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "126624556212-eef46rtiafsmfpv2umphla24ihn9om9o.apps.googleusercontent.com",
+          "client_type": 3
+        },
+        {
+          "client_id": "126624556212-6926adpv3d3c2p7505a505gb01uq02cj.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "com.trivia.android",
+            "certificate_hash": "29a762355234288e368a20e751caf5da34c414d1"
+          }
+        },
+        {
+          "client_id": "126624556212-nj0bd10205vtda966p98mqlaoc8a9fkr.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyCcNDYMqcDdC07egqC388YsQ-vpeC3yvPg"
+        }
+      ],
+      "services": {
+        "analytics_service": {
+          "status": 1
+        },
+        "appinvite_service": {
+          "status": 2,
+          "other_platform_oauth_client": [
+            {
+              "client_id": "126624556212-eef46rtiafsmfpv2umphla24ihn9om9o.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        },
+        "ads_service": {
+          "status": 2
+        }
+      }
+    },
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:126624556212:android:39aac86dfee58e56",
+        "android_client_info": {
           "package_name": "com.example.maor.trivia"
         }
       },
       "oauth_client": [
         {
-          "client_id": "126624556212-6926adpv3d3c2p7505a505gb01uq02cj.apps.googleusercontent.com",
+          "client_id": "126624556212-5csljknfk5vidq8re587c41nuheelp7n.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "com.example.maor.trivia",
+            "certificate_hash": "f2d5ba1997a5438a4c2fdbd230809c6b1c1ab572"
+          }
+        },
+        {
+          "client_id": "126624556212-eef46rtiafsmfpv2umphla24ihn9om9o.apps.googleusercontent.com",
+          "client_type": 3
+        },
+        {
+          "client_id": "126624556212-i3gv0t1aej9bn9f25juqi4jfnrnvmfj3.apps.googleusercontent.com",
           "client_type": 1,
           "android_info": {
             "package_name": "com.example.maor.trivia",
@@ -40,7 +100,7 @@
           "status": 2,
           "other_platform_oauth_client": [
             {
-              "client_id": "126624556212-nj0bd10205vtda966p98mqlaoc8a9fkr.apps.googleusercontent.com",
+              "client_id": "126624556212-eef46rtiafsmfpv2umphla24ihn9om9o.apps.googleusercontent.com",
               "client_type": 3
             }
           ]

@@ -11,8 +11,9 @@ import android.widget.ListView;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
 
+import com.example.maor.trivia.Class.Question;
+import com.example.maor.trivia.Class.Quiz;
 import com.example.maor.trivia.R;
-import com.example.maor.trivia.Class.User;
 import com.example.maor.trivia.WaitingRoom;
 import com.example.maor.trivia.WaitingRoomList;
 import com.google.firebase.auth.FirebaseAuth;
@@ -23,6 +24,7 @@ import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.ValueEventListener;
 
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -45,6 +47,8 @@ public class WaitingRoomActivity extends AppCompatActivity {
     private String id;
     private Button joinButton;
     private Drawable correctColor;
+    private DatabaseReference questionsRef;
+    private Quiz quiz;
 
 
     @Override
@@ -52,12 +56,16 @@ public class WaitingRoomActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_waiting_room);
 
+
+        quiz = new Quiz(this);
+
         createRoomButton =findViewById(R.id.create_room);
 //        linearLayout =findViewById(R.id.waiting_room_container);
         listViewWaitingRoom =findViewById(R.id.waiting_rooms_container);
 
         database = FirebaseDatabase.getInstance();
         myRef = database.getReference("Waiting room");
+        questionsRef = database.getReference("Questions Repo");
 
         currentFirebaseUser = FirebaseAuth.getInstance().getCurrentUser() ;
         myRef.child("Waiting Room").child(currentFirebaseUser.getUid());
@@ -71,10 +79,37 @@ public class WaitingRoomActivity extends AppCompatActivity {
         joinButton = findViewById(R.id.join_game);
 
 
-
-
+        //   writeQuestionToFireBase();
         createWaitingRoom();
 
+    }
+
+    private void writeQuestionToFireBase() {
+
+
+        ArrayList<Question> questionsRepo = quiz.getQuestions();
+        String questionId = questionsRef.push().getKey();
+        readQuestionsFromFiles();
+        int numOfQuestions = questionsRepo.size();
+
+        for (int i = 0 ; i <  numOfQuestions; i ++){
+            questionId = questionsRef.push().getKey();
+            questionsRepo.get(i).setId(questionId);
+            questionsRef.child(questionsRepo.get(i).getId()).setValue(questionsRepo.get(i));
+        }
+
+
+
+    }
+
+    private void readQuestionsFromFiles() {
+        try {
+            quiz.readTrueFalseQuestionFromFile();
+            quiz.readMCQuestionsFromFile();
+
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
     }
 
 
@@ -103,7 +138,7 @@ public class WaitingRoomActivity extends AppCompatActivity {
     protected void onStop() {
         super.onStop();
         if(id != null) {
-            myRef.child(id).removeValue();
+            //  myRef.child(id).removeValue();
         }
     }
 
@@ -121,6 +156,8 @@ public class WaitingRoomActivity extends AppCompatActivity {
     @Override
     protected void onStart() {
         super.onStart();
+
+
 
         myRef.addValueEventListener(new ValueEventListener() {
             @Override
@@ -157,6 +194,7 @@ public class WaitingRoomActivity extends AppCompatActivity {
                 if(!isUserOpenedRoom) {
                     isUserOpenedRoom = true;
                     WaitingRoom waitingRoom = createWaitingRoomInFireBase();
+                    final String waitingId = waitingRoom.getWaitRoomId();
 
                     final DatabaseReference isWaitingReference = database.getReference("Waiting room").child(waitingRoom.getWaitRoomId());
                     DatabaseReference isReadyReference = isWaitingReference.child("ready");
@@ -168,7 +206,10 @@ public class WaitingRoomActivity extends AppCompatActivity {
                             if (isReady != null) {
                                 if (isReady) {
 //                                isWaitingReference.removeValue();
-                                    startActivity(new Intent(getApplicationContext(), CompeteActivity.class));
+
+                                    Intent intent = new Intent(getApplicationContext(), CompeteActivity.class);
+                                    intent.putExtra("WaitingRoom", waitingId);
+                                    startActivity(intent);
                                 }
                             }
                         }

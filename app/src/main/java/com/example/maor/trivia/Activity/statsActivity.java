@@ -1,29 +1,26 @@
 package com.example.maor.trivia.Activity;
 
+import android.graphics.Color;
 import android.os.Bundle;
+import android.os.Handler;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.support.v7.app.AppCompatActivity;
 import android.util.Log;
-import android.widget.ArrayAdapter;
 import android.widget.ListView;
+import android.widget.TextView;
 import android.widget.Toast;
 
-import com.example.maor.trivia.Class.User;
 import com.example.maor.trivia.R;
-import com.example.maor.trivia.Class.UserInformation;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
-import com.google.firebase.database.ChildEventListener;
 import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.ValueEventListener;
 
-import java.util.ArrayList;
 import java.util.HashMap;
-import java.util.List;
 
 /**
  * Created by User on 2/8/2017.
@@ -39,14 +36,22 @@ public class statsActivity extends AppCompatActivity {
     private DatabaseReference myRef;
     private String userID;
     private ListView mListView;
-private int  flagForStatsOpen;
+    private int  flagForStatsOpen;
+
+
+
+    private  TextView mtotal;
+    private  TextView mwin;
+    private  TextView mlose;
+    private  TextView mhighscore;
+    private  TextView mEmail;
+
+
+
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_stats);
-
-        mListView = (ListView) findViewById(R.id.listview);
-
         //declare the database reference object. This is what we use to access the database.
         //NOTE: Unless you are signed in, this will not be useable.
         mAuth = FirebaseAuth.getInstance();
@@ -55,13 +60,70 @@ private int  flagForStatsOpen;
         FirebaseUser user = mAuth.getCurrentUser();
         userID = user.getUid();
 
+    }
+    @Override
+    public void onStart() {
+        super.onStart();
+        checkAuth();
+        mAuth.addAuthStateListener(mAuthListener);
+    }
+    @Override
+    public void onResume() {
+        super.onResume();
+
+        checkTocreatestastNode();
+        final Handler handler = new Handler();
+        handler.postDelayed(new Runnable() {
+            @Override
+            public void run() {
+                openStatsInFirebase();
+            }
+        }, 3000);
+
+
+        Log.d("flag",""+ flagForStatsOpen);
+       updateDateFromDateBase();
 
 
 
+       //uploadStatsToFireBase();
 
-        createStatsForUser();
+    }
+    @Override
+    public void onStop() {
+        super.onStop();
+        if (mAuthListener != null) {
+            mAuth.removeAuthStateListener(mAuthListener);
+        }
+    }
+    /**
+     * customizable toass
+     * @param message
+     */
+    private void toastMessage(String message) {
+        Toast.makeText(this, message, Toast.LENGTH_SHORT).show();
+    }
 
+    public void openStatsInFirebase()
+    {
+        Log.d("flag","openStatsInFirebase" +flagForStatsOpen);
+        if(flagForStatsOpen == 1)
+        {
+            HashMap forstats = new HashMap();
+            myRef = FirebaseDatabase.getInstance().getReference("stats");
 
+            forstats.put("Total_games_played", 0);
+            forstats.put("Win", 0);
+            forstats.put("Lose", 0);
+            forstats.put("High_Score", 0);
+            forstats.put("Email",mAuth.getCurrentUser().getEmail().toString());
+
+            String emailWithOutPoint2 = mAuth.getCurrentUser().getEmail().toString();
+            emailWithOutPoint2 = emailWithOutPoint2.replace(".","");
+            myRef.child(emailWithOutPoint2).setValue(forstats);
+        }
+    }
+    private void checkAuth() {
         mAuthListener = new FirebaseAuth.AuthStateListener() {
             @Override
             public void onAuthStateChanged(@NonNull FirebaseAuth firebaseAuth) {
@@ -78,124 +140,59 @@ private int  flagForStatsOpen;
                 // ...
             }
         };
+    }
+    private void updateDateFromDateBase() {
+
+        mtotal = findViewById(R.id.totalGameNumber);
+        mwin = findViewById(R.id.winNubmer);
+        mlose = findViewById(R.id.loseNumber);
+        mhighscore = findViewById(R.id.highScoreNumber);
+        mEmail= findViewById(R.id.EmailNumber);
+
+        myRef = FirebaseDatabase.getInstance().getReference("stats");
+
+        String emailWithOutPoint = mAuth.getCurrentUser().getEmail().toString();
+        emailWithOutPoint = emailWithOutPoint.replace(".","");
 
 
-
-
-
-
-
-
-        myRef.child("stats").child(userID).addValueEventListener(new ValueEventListener() {
+        myRef.child(emailWithOutPoint).addValueEventListener(new ValueEventListener() {
             @Override
             public void onDataChange(DataSnapshot dataSnapshot) {
-                showData(dataSnapshot);
+                mtotal.setText(String.valueOf(dataSnapshot.child("Total_games_played").getValue()));
+                mwin.setText(String.valueOf(dataSnapshot.child("Win").getValue()));
+                mlose.setText(String.valueOf(dataSnapshot.child("Lose").getValue()));
+                mhighscore.setText(String.valueOf(dataSnapshot.child("High_Score").getValue()));
+                mEmail.setText(String.valueOf(dataSnapshot.child("Email").getValue()));
+
             }
             @Override
             public void onCancelled(DatabaseError databaseError) {
 
             }
         });
-
-
     }
+    private void checkTocreatestastNode() {
+        flagForStatsOpen = 1;
 
-    private void createStatsForUser() {
-
-         flagForStatsOpen = 1;
-        myRef.child("stats").child(userID).addChildEventListener(new ChildEventListener() {
+        myRef = FirebaseDatabase.getInstance().getReference("stats");
+        myRef.addValueEventListener(new ValueEventListener() {
             @Override
-            public void onChildAdded(DataSnapshot dataSnapshot, String s) {
-                for (DataSnapshot ds : dataSnapshot.getChildren()) {
-                        if (ds.child("Email").getValue().toString() == mAuth.getCurrentUser().getEmail())
-                        {
-                            flagForStatsOpen =0;
-                            break;
-                        }
+            public void onDataChange(DataSnapshot dataSnapshot) {
+                String emailWithOutPoint = mAuth.getCurrentUser().getEmail().toString();
+                emailWithOutPoint = emailWithOutPoint.replace(".", "");
 
+                if (dataSnapshot.hasChild(emailWithOutPoint)) {
+                        flagForStatsOpen = 0;
                 }
-
             }
-
-            @Override
-            public void onChildChanged(DataSnapshot dataSnapshot, String s) {
-
-            }
-
-            @Override
-            public void onChildRemoved(DataSnapshot dataSnapshot) {
-
-            }
-
-            @Override
-            public void onChildMoved(DataSnapshot dataSnapshot, String s) {
-
-            }
-
             @Override
             public void onCancelled(DatabaseError databaseError) {
 
             }
         });
-
-
-        if(flagForStatsOpen == 1)
-        {
-            HashMap forstats = new HashMap();
-            myRef = FirebaseDatabase.getInstance().getReference("stats");
-            forstats.put("Email", mAuth.getCurrentUser().getEmail());
-            forstats.put("Total_games_played", 0);
-            forstats.put("Win", 0);
-            forstats.put("Lose", 0);
-            forstats.put("High_Score", 0);
-            myRef.push().setValue(forstats);
-        }
-
-
-
-
-
-    }
-
-    private void showData(DataSnapshot dataSnapshot) {
-
-            for (DataSnapshot ds : dataSnapshot.getChildren()) {
-            UserInformation uInfo = new UserInformation();
-
-            uInfo.setTotal_games_played(ds.child("Total_games_played").getValue(UserInformation.class).getTotal_games_played()); //set the name
-            uInfo.setEmail(ds.child("email").getValue(UserInformation.class).getEmail()); //set the email
-            uInfo.setWin(ds.child("Win").getValue(UserInformation.class).getWin()); //set the phone_num
-
-
-            ArrayList<String> array = new ArrayList<>();
-            array.add(uInfo.getTotal_games_played());
-            array.add(uInfo.getEmail());
-            array.add(uInfo.getWin());
-            ArrayAdapter adapter = new ArrayAdapter(this, android.R.layout.simple_list_item_1, array);
-            mListView.setAdapter(adapter);
-        }
     }
 
 
-    @Override
-    public void onStart() {
-        super.onStart();
-        mAuth.addAuthStateListener(mAuthListener);
-    }
 
-    @Override
-    public void onStop() {
-        super.onStop();
-        if (mAuthListener != null) {
-            mAuth.removeAuthStateListener(mAuthListener);
-        }
-    }
-    /**
-     * customizable toast
-     *
-     * @param message
-     */
-    private void toastMessage(String message) {
-        Toast.makeText(this, message, Toast.LENGTH_SHORT).show();
-    }
 }
+

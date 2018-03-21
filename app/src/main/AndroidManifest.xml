@@ -30,14 +30,17 @@
         <activity android:name=".Activity.MenuActivity" />
         <activity android:name=".Activity.PlayNowActivity" />
         <activity android:name=".Activity.QuickGameActivity" />
-        <activity android:name=".Activity.SettingsActivity" />
+        <activity
+            android:name=".Activity.SettingsActivity"
+            android:noHistory="true" />
         <activity android:name=".Activity.SignUpActivity" />
         <activity android:name=".Activity.ProfileActivity" />
         <activity android:name=".Activity.statsActivity" />
         <activity android:name=".Activity.LeaderBoradActivity" />
         <activity android:name=".Activity.CompeteActivity" />
         <activity android:name=".SingleWaitingRoomActivity" />
-        <activity android:name=".Activity.WaitingRoomActivity"></activity>
+        <activity android:name=".Activity.WaitingRoomActivity" />
+        <activity android:name=".Activity.resultActivity"></activity>
     </application>
 
 </manifest>

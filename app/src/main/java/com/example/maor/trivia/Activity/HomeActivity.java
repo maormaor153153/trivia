@@ -53,7 +53,6 @@ public class HomeActivity extends BaseActivity implements
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
-
         // Button listeners
         findViewById(R.id.sign_in_button).setOnClickListener(this);
         findViewById(R.id.textViewSignup).setOnClickListener(this);
@@ -93,62 +92,23 @@ public class HomeActivity extends BaseActivity implements
         }
 
     }
-
-    private void facebookSignUp() {
-        Log.d(TAG, "facebookSignUp: im here");
-        facebookSignUp.registerCallback(callbackManager, new FacebookCallback<LoginResult>() {
-            @Override
-            public void onSuccess(LoginResult loginResult) {
-                Toast.makeText(HomeActivity.this, "Logged in Successfully!", Toast.LENGTH_SHORT).show();
-                Log.d(TAG, "Login success, " + loginResult.getAccessToken().getUserId() +
-                        "\n" + loginResult.getAccessToken().getToken());
-                handleFacebookAccessToken(loginResult.getAccessToken());
-            }
-
-            @Override
-            public void onCancel() {
-                Toast.makeText(HomeActivity.this, "Login cancelled", Toast.LENGTH_SHORT).show();
-            }
-
-            @Override
-            public void onError(FacebookException error) {
-                Toast.makeText(HomeActivity.this, "Error facebook Signup", Toast.LENGTH_SHORT).show();
-            }
-        });
-    }
-
-    private void handleFacebookAccessToken(AccessToken accessToken) {
-        Log.d(TAG, "handleFacebookAccessToken:" + accessToken);
-
-        AuthCredential credential = FacebookAuthProvider.getCredential(accessToken.getToken());
-        mAuth.signInWithCredential(credential)
-                .addOnCompleteListener(this, new OnCompleteListener<AuthResult>() {
-                    @Override
-                    public void onComplete(@NonNull Task<AuthResult> task) {
-                        if (task.isSuccessful()) {
-                            // Sign in success, update UI with the signed-in user's information
-                            Log.d(TAG, "signInWithCredential:success");
-                            //FirebaseUser user = mFirebaseAuth.getCurrentUser();
-
-                            boolean isNew = task.getResult().getAdditionalUserInfo().isNewUser();
-                            Log.d(TAG, "signInWithCredential: " + (isNew ? "new user" : "old user"));
-                            if (isNew) {
-                               // initUserDefaultData();
-                            }
-                            Intent intent = new Intent(HomeActivity.this, MenuActivity.class);
-                            intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
-                            intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TASK);
-                            startActivity(intent);
-                        } else {
-                            // If sign in fails, display a message to the user.
-                            Log.w(TAG, "signInWithCredential:failure", task.getException());
-                            Toast.makeText(HomeActivity.this, "auth failed", Toast.LENGTH_SHORT).show();
-                        }
-                    }
-                });
-    }
-    // [START on_start_check_user]
     @Override
+    public void onResume() {
+        super.onResume();
+
+    }
+
+    @Override
+    public void onBackPressed()
+    {
+        Intent intent = new Intent(HomeActivity.this, HomeActivity.class);
+        startActivity(intent);
+        finish();
+
+    }
+
+
+        @Override
     public void onActivityResult(int requestCode, int resultCode, Intent data) {
         super.onActivityResult(requestCode, resultCode, data);
 

@@ -21,26 +21,46 @@ import android.widget.LinearLayout;
 import android.widget.ProgressBar;
 import android.widget.TextView;
 
+import com.example.maor.trivia.Class.GameRoom;
 import com.example.maor.trivia.Class.MultipleChoice;
 import com.example.maor.trivia.Class.Question;
 import com.example.maor.trivia.Class.Quiz;
 import com.example.maor.trivia.R;
 import com.example.maor.trivia.TrueFalse;
+import com.google.firebase.auth.FirebaseAuth;
+import com.google.firebase.auth.FirebaseUser;
+import com.google.firebase.database.DataSnapshot;
+import com.google.firebase.database.DatabaseError;
+import com.google.firebase.database.DatabaseReference;
+import com.google.firebase.database.FirebaseDatabase;
+import com.google.firebase.database.ValueEventListener;
 
 import java.io.IOException;
+import java.lang.reflect.Array;
 import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
 import java.util.Random;
+import java.util.Timer;
+import java.util.TimerTask;
 
 public class CompeteActivity extends AppCompatActivity {
 
 
     Button choice1, choice2, choice3, choice4;
-    TextView userScoreTextView, oppnentScoreTextView;
+    TextView player1TextView, player2TextView;
     private static final String CORRECT_STR_SOUND= "correct.mp3";
     private static final String WRONG_STR_SOUND= "wrong.mp3";
 
 
-    private int userScore , oppnentScore = 0;
+    FirebaseDatabase database;
+
+    DatabaseReference gameRoomRef;
+    FirebaseUser currentFirebaseUser;
+    private DatabaseReference waitingRoomRef;
+
+    private int player1Score, player2Score = 0;
     private Quiz quizMaster;
     ArrayList<Question> questionsRepo;
     int numOfQuestions;
@@ -49,24 +69,64 @@ public class CompeteActivity extends AppCompatActivity {
     ObjectAnimator animation;
     Handler handler ;
     AssetFileDescriptor afd;
+    int numOfQuestion;
+    private com.example.maor.trivia.Activity.User player1;
+    private com.example.maor.trivia.Activity.User player2;
+
     Drawable correctColor;
     Drawable wrongColor;
     Drawable notAnsweredColor;
+
     LinearLayout linearLayout;
 
+    private static final String PLAYER1_FB_REF= "player1";
+    private static final String PLAYER2_FB_REF= "player2";
+    private static final String SCORE_FB_REF= "score";
+    private static final String OPTION_CLICKED_FB_REF= "optionClicked";
+    private static final String NUM_OF_QUESTION_TO_DISPLAY_FB_REF= "numOfQuestionToDisplay";
+    private static final String WHO_PLAY_FB_REF= "whoPlay";
+
+
+    ArrayList<String> forSaveData;
+    ArrayList<Integer> forSaveDataNumber;
+    private DatabaseReference myRef;
+    private FirebaseAuth mAuth;
 
 
     Random r;
     private ProgressBar mProgressBar;
     private long timeLeft;
 
+    private DatabaseReference numOfQuestionRef;
+    private List<GameRoom> gameRoomList;
+    private String gameRoomid;
+
+    private boolean isFirstChoosen;
+    private boolean isqQuestionChanged;
+    private String playerToStart;
+
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_compete);
+        gameRoomList = new ArrayList<>();
+
+
+        Intent intent = getIntent();
+        String id = intent.getStringExtra("WaitingRoom");
 
 
 
+
+
+        currentQuestionNum = -1;
+
+        database = FirebaseDatabase.getInstance();
+        waitingRoomRef = database.getReference("Waiting room").child(id);
+
+
+        currentFirebaseUser = FirebaseAuth.getInstance().getCurrentUser() ;
 
         quizMaster = new Quiz(this);
         questionsRepo = quizMaster.getQuestions();
@@ -89,11 +149,17 @@ public class CompeteActivity extends AppCompatActivity {
         choice3 = (Button) findViewById(R.id.choice3);
         choice4 = (Button) findViewById(R.id.choice4);
 
-        userScoreTextView = (TextView) findViewById(R.id.user_score);
-        oppnentScoreTextView = (TextView) findViewById(R.id.user_score);
+        player1TextView = (TextView) findViewById(R.id.player1Score);
+        player2TextView = (TextView) findViewById(R.id.player2Score);
 
-        initilaizeTextView(userScoreTextView, "Score:");
-        initilaizeTextView(oppnentScoreTextView, "Score:");
+        initilaizeTextView(player1TextView, "Score:");
+        initilaizeTextView(player2TextView, "Score:");
+
+
+        isFirstChoosen = false;
+        getQuestionNum();
+
+
 
         try {
             quizMaster.readTrueFalseQuestionFromFile();
@@ -103,25 +169,194 @@ public class CompeteActivity extends AppCompatActivity {
             e.printStackTrace();
         }
 
-        this.numOfQuestions = questionsRepo.size();
+
+
+        forSaveData = new ArrayList<>();
+        forSaveDataNumber = new ArrayList<>();
 
 
 
 
 
-        whoPlayFirst();
 
-        r = new Random();
-        int numOfQuestion = r.nextInt(questionsRepo.size());
-        displayQuestion(numOfQuestion);
 
     }
 
 
 
+
+    @Override
+    protected void onStart() {
+        super.onStart();
+
+        waitingRoomRef.addValueEventListener(new ValueEventListener() {
+            @Override
+            public void onDataChange(DataSnapshot dataSnapshot) {
+
+                gameRoomid = (String)dataSnapshot.child("Game Room id").getValue();
+
+
+                gameRoomRef = database.getReference("Game Room").child(gameRoomid);
+            }
+
+
+            @Override
+            public void onCancelled(DatabaseError databaseError) {
+
+            }
+        });
+
+
+
+
+    }
+
+    private void getQuestionNum() {
+        handler.postDelayed(new Runnable() {
+            @Override
+            public void run() {
+                gameRoomRef.addValueEventListener(new ValueEventListener() {
+                    @Override
+                    public void onDataChange(DataSnapshot dataSnapshot) {
+
+                        Long n = (Long) dataSnapshot.child(NUM_OF_QUESTION_TO_DISPLAY_FB_REF).getValue();
+
+
+
+
+                        player1 =  dataSnapshot.child(PLAYER1_FB_REF).getValue(com.example.maor.trivia.Activity.User.class);
+                        player2 =  dataSnapshot.child(PLAYER2_FB_REF).getValue(com.example.maor.trivia.Activity.User.class);
+
+                        if(!isFirstChoosen & currentFirebaseUser.getUid().equals(player1.getId())){
+                            isFirstChoosen = true;
+                            whoPlayFirst();
+                        }
+
+                        playerToStart = (String)dataSnapshot.child("whoPlay").getValue();
+                        if(playerToStart != null ) {
+
+
+                            setPlayerTurn(playerToStart);
+                        }
+
+                        if(playerToStart != null ) {
+                            if (n.intValue() != currentQuestionNum) {String name = (String) dataSnapshot.child(playerToStart).child("name").getValue();
+//                             currentQuestionNum = numOfQuestionToDisplay;
+                                final int s = n.intValue();
+                                displayQuestion(s, playerToStart, name);
+                            }
+                        }
+
+
+
+                        Long data = (Long) dataSnapshot.child(PLAYER1_FB_REF).child(SCORE_FB_REF).getValue(); // TODO MAOR HERE U CAN GET THE SCORE OF PLAYER 1
+                        Log.d("hereplayer1",SCORE_FB_REF+data);
+                        int score = data.intValue();
+
+                        player1TextView.setText(player1.getName() + score);
+
+                        Long data1 = (Long) dataSnapshot.child(PLAYER2_FB_REF).child(SCORE_FB_REF).getValue(); // TODO MAOR HERE U CAN GET THE SCORE OF PLAYER 2
+                        int score1 = data1.intValue();
+                        Log.d("hereplayer2","score"+data1);
+
+                        player2TextView.setText(player2.getName() + score1);
+
+                        forSaveData.add(0,player1.getName());
+                        forSaveData.add(1,player2.getName());
+
+                        forSaveDataNumber.add(0,score);
+                        forSaveDataNumber.add(1,score1);
+
+
+
+                        Long playerClick = (Long)dataSnapshot.child(OPTION_CLICKED_FB_REF).getValue();
+
+                        findOptionByTag(playerClick,playerToStart);
+
+
+
+
+
+
+                    }
+
+
+
+                    @Override
+                    public void onCancelled(DatabaseError databaseError) {
+
+                    }
+                });
+
+            }
+        }, 100);
+    }
+
+    private void findOptionByTag(Long playerClick, String playerToStart) {
+        if(playerClick != -1){
+
+            int size =linearLayout.getChildCount();
+            for(int i = 0 ; i < size ; i++){
+                int b= Integer.parseInt((String) linearLayout.getChildAt(i).getTag());
+
+                if(b == playerClick){
+                    Button button = (Button) linearLayout.getChildAt(i);
+                    if(quizMaster.isCorrect(currentQuestionNum,button.getText().toString())){
+                        setAnimationToButtons(button, correctColor);
+                        playSound(CORRECT_STR_SOUND);
+                    }
+                    else{
+                        setAnimationToButtons(button, wrongColor);
+                        playSound(WRONG_STR_SOUND);
+                    }
+
+                }
+
+            }
+            timer.cancel();
+            animation.cancel();
+            gameRoomRef.child(OPTION_CLICKED_FB_REF).setValue(-1);
+            changeTurns(playerToStart);
+
+
+            isqQuestionChanged = false;
+            delayTillNextQuestion();
+
+
+
+//            delayTillNextQuestion();
+        }
+    }
+
+    private void changeTurns(String playerToStart) {
+
+        if(playerToStart.equals(PLAYER1_FB_REF)) {
+
+            gameRoomRef.child(WHO_PLAY_FB_REF).setValue(PLAYER2_FB_REF);
+        }
+        else {
+
+            gameRoomRef.child(WHO_PLAY_FB_REF).setValue(PLAYER1_FB_REF);
+        }
+
+    }
+
+    private void setPlayerTurn(String playerToStart) {
+        if(playerToStart != null) {
+            if (playerToStart.equals(PLAYER1_FB_REF)) {
+                player1.setTurn(true);
+
+            } else {
+                player2.setTurn(true);
+            }
+        }
+    }
+
     @Override
     protected void onResume() {
+
         super.onResume();
+
 
     }
 
@@ -145,12 +380,12 @@ public class CompeteActivity extends AppCompatActivity {
                     animation.cancel();
                     if (quizMaster.isCorrect(currentQuestionNum, choice1.getText().toString())){
                         if(quizMaster.isUserTurn()) {
-                            userScore += quizMaster.calculateScore(timeLeft);
-                            userScoreTextView.setText("Score: " + userScore);
+                            player1Score += quizMaster.calculateScore(timeLeft);
+                            player1TextView.setText("Score: " + player1Score);
                         }
                         else{
-                            oppnentScore += quizMaster.calculateScore(timeLeft);
-                            oppnentScoreTextView.setText("Score: "+ oppnentScore);
+                            player2Score += quizMaster.calculateScore(timeLeft);
+                            player2TextView.setText("Score: "+ player2Score);
                         }
                         setAnimationToButtons(v, correctColor);
                         playSound(CORRECT_STR_SOUND);
@@ -171,18 +406,17 @@ public class CompeteActivity extends AppCompatActivity {
     }
 
     private void whoPlayFirst() {
-        //if i = 0 -> User Play first if i = 1 oppenent play first
+        //if n = 0 -> player1 starts , if n = 1 player2 play first
         r = new Random();
         int n = r.nextInt(2);
-        if(n == 1 ){
-            quizMaster.setUserTurn(true);
-        }
-        else{
-            quizMaster.setOpenentTurn(true);
+        if(currentFirebaseUser.getUid().equals(player1.getId())) {
+            if (n == 0) {
+                gameRoomRef.child(WHO_PLAY_FB_REF).setValue(PLAYER1_FB_REF);
+            } else {
+                gameRoomRef.child(WHO_PLAY_FB_REF).setValue(PLAYER2_FB_REF);
+            }
         }
     }
-
-
 
     private void choice1Listener() {
         choice1.setOnClickListener(new View.OnClickListener() {
@@ -190,57 +424,47 @@ public class CompeteActivity extends AppCompatActivity {
             public void onClick(View v) {
                 disableAllButtonsThatNotClicked();
                 v.setBackground(notAnsweredColor);
-                timer.cancel();
-                animation.cancel();
                 int answerClicked = Integer.parseInt((String)v.getTag());//TODO Send player click to firebase
-                if (quizMaster.isCorrect(currentQuestionNum, choice1.getText().toString())){
-                    if(quizMaster.isUserTurn()) {
-                        userScore += quizMaster.calculateScore(timeLeft);
-                        userScoreTextView.setText("Score: " + userScore);
-                    }
-                    else{
-                        oppnentScore += quizMaster.calculateScore(timeLeft);
-                        oppnentScoreTextView.setText("Score: "+ oppnentScore);
-                    }
-                    setAnimationToButtons(v, correctColor);
-                    playSound(CORRECT_STR_SOUND);
-                }
-                else{
-                    setAnimationToButtons(v, wrongColor);
-                    playSound(WRONG_STR_SOUND);
-                }
-                delayTillNextQuestion();
+                sendUserClickToDataBase(answerClicked);
+                calculateScoreAndAddToFireBase((Button)v);
+
+
 
             }
         });
     }
+
+    private void calculateScoreAndAddToFireBase(Button v) {
+
+        if(quizMaster.isCorrect(currentQuestionNum,v.getText().toString())) {
+            if (currentFirebaseUser.getUid().equals(player1.getId())) {
+
+                player1Score += quizMaster.calculateScore(timeLeft);
+                gameRoomRef.child(PLAYER1_FB_REF).child("score").setValue(player1Score);
+
+            }
+            if (currentFirebaseUser.getUid().equals(player2.getId())) {
+                player2Score += quizMaster.calculateScore(timeLeft);
+                gameRoomRef.child("player2").child(SCORE_FB_REF).setValue(player2Score);
+
+            }
+        }
+    }
+
     private void choice2Listener() {
         choice2.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
 
                 disableAllButtonsThatNotClicked();
-
-                timer.cancel();
-                animation.cancel();
+//                setTimeOnFireBase();
+                v.setBackground(notAnsweredColor);
+                //  timer.cancel();
+                //  animation.cancel();
                 int answerClicked = Integer.parseInt((String)v.getTag());//TODO Send player click to firebase
-                if (quizMaster.isCorrect(currentQuestionNum, choice2.getText().toString())){
-                    if(quizMaster.isUserTurn()) {
-                        userScore += quizMaster.calculateScore(timeLeft);
-                        userScoreTextView.setText("Score: " + userScore);
-                    }
-                    else{
-                        oppnentScore += quizMaster.calculateScore(timeLeft);
-                        oppnentScoreTextView.setText("Score: "+ oppnentScore);
-                    }
-                    setAnimationToButtons(v, correctColor);
-                    playSound(CORRECT_STR_SOUND);
-                }
-                else{
-                    setAnimationToButtons(v, wrongColor);
-                    playSound(WRONG_STR_SOUND);
-                }
-                delayTillNextQuestion();
+                sendUserClickToDataBase(answerClicked);
+                calculateScoreAndAddToFireBase((Button)v);
+
             }
         });
     }
@@ -249,27 +473,13 @@ public class CompeteActivity extends AppCompatActivity {
             @Override
             public void onClick(View v) {
                 disableAllButtonsThatNotClicked();
-                timer.cancel();
-                animation.cancel();
+                v.setBackground(notAnsweredColor);
                 int answerClicked = Integer.parseInt((String)v.getTag());//TODO Send player click to firebase
-                if (quizMaster.isCorrect(currentQuestionNum, choice3.getText().toString())){
-                    if(quizMaster.isUserTurn()) {
-                        userScore += quizMaster.calculateScore(timeLeft);
-                        userScoreTextView.setText("Score: " + userScore);
-                    }
-                    else{
-                        oppnentScore += quizMaster.calculateScore(timeLeft);
-                        oppnentScoreTextView.setText("Score: "+ oppnentScore);
-                    }
-                    setAnimationToButtons(v, correctColor);
-                    playSound(CORRECT_STR_SOUND);
-                }
-                else{
-                    setAnimationToButtons(v, wrongColor);
-                    playSound(WRONG_STR_SOUND);
-                }
+                sendUserClickToDataBase(answerClicked);
+                calculateScoreAndAddToFireBase((Button)v);
 
-                delayTillNextQuestion();
+
+
             }
         });
     }
@@ -278,40 +488,37 @@ public class CompeteActivity extends AppCompatActivity {
             @Override
             public void onClick(View v) {
                 disableAllButtonsThatNotClicked();
-                timer.cancel();
-                animation.cancel();
+                v.setBackground(notAnsweredColor);
                 int answerClicked = Integer.parseInt((String)v.getTag()); //TODO Send player click to firebase
-                if (quizMaster.isCorrect(currentQuestionNum, choice4.getText().toString())){
-                    if(quizMaster.isUserTurn()) {
-                        userScore += quizMaster.calculateScore(timeLeft);
-                        userScoreTextView.setText("Score: " + userScore);
-                    }
-                    else{
-                        oppnentScore += quizMaster.calculateScore(timeLeft);
-                        oppnentScoreTextView.setText("Score: "+ oppnentScore);
-                    }
-                    setAnimationToButtons(v,correctColor);
-                    playSound(CORRECT_STR_SOUND);
-                }
-                else{
-                    playSound(WRONG_STR_SOUND);
-                    setAnimationToButtons(v,wrongColor);
-                }
+                sendUserClickToDataBase(answerClicked);
+                calculateScoreAndAddToFireBase((Button)v);
 
-                delayTillNextQuestion();
+
+
 
 
             }
         });
     }
 
+    private void setTimeOnFireBase() {
+        gameRoomRef.child("isTimeStopped").setValue(true);
+    }
+
+
+    private void sendUserClickToDataBase(Object userClick){
+
+        if(userClick instanceof Integer) {
+            int optionSelected = (int)userClick;
+            gameRoomRef.child(OPTION_CLICKED_FB_REF).setValue(optionSelected);
+        }
+    }
 
     private void disableAllButtonsThatNotClicked() {
         LinearLayout linearLayout = findViewById(R.id.question_container);
         int size = linearLayout.getChildCount();
         for( int i = 0 ; i < size; i++) {
             View view = linearLayout.getChildAt(i);
-
             view.setEnabled(false);
             view.setBackgroundResource(R.drawable.mydisablecolor);
 
@@ -320,14 +527,19 @@ public class CompeteActivity extends AppCompatActivity {
     }
 
     private void delayTillNextQuestion() {
-        handler.postDelayed(new Runnable() {
+        new Timer().schedule(new TimerTask() {
             @Override
             public void run() {
-                displayQuestion(r.nextInt(numOfQuestions));
+                if(!isqQuestionChanged) {
+                    isqQuestionChanged = true;
+                    if (currentFirebaseUser.getUid().equals(player1.getId())) {
+                        final int n = r.nextInt(questionsRepo.size());
+                        gameRoomRef.child(NUM_OF_QUESTION_TO_DISPLAY_FB_REF).setValue(n);
+                    }
+                }
             }
-        }, 2000);
+        }, 2500);
     }
-
 
     private void setAnimationToButtons(View v, Drawable color) {
         final Drawable colorToPaint = color;
@@ -344,8 +556,6 @@ public class CompeteActivity extends AppCompatActivity {
         }
     }
 
-
-
     private void playSound(String str) {
         try {
             afd = getAssets().openFd(str);
@@ -358,13 +568,12 @@ public class CompeteActivity extends AppCompatActivity {
         }
     }
 
-
-    private void displayQuestion(int i) {
+    private void displayQuestion(int i, String playerToStart, String name) {
         quizMaster.incrementQuestionsAsked();
 
-        if(!quizMaster.isGameOver()) {
-            initTimer();
 
+        if (!quizMaster.isGameOver()) {
+            initTimer();
             animateProgressBar();
 
             timer.start();
@@ -381,54 +590,50 @@ public class CompeteActivity extends AppCompatActivity {
             }
 
 
-
             TextView questionTextView = findViewById(R.id.question);
             initilaizeTextView(questionTextView, question.getQuestion());
 
-            checkWhoPlay(i);
+            TextView whoPlayTextView = findViewById(R.id.who_play);
+            initilaizeTextView(whoPlayTextView, name + " Play's");
+
+            setListenersByTurn(playerToStart);
         }
-        else{
-            gameOver();
+        else {
+            updateForStatsEveryPlayer();
+            updateForLeaderBoard();
+            intentActivityResult();
+
         }
-
-
-
-
-
-
-
-
-
-
-
-
-
 
 
     }
 
-    private void checkWhoPlay(int i) {
-        if (quizMaster.isUserTurn()) {
-            quizMaster.setUserTurn(false);
-            quizMaster.setOpenentTurn(true);
-            setListeners();
-
-        }else {
-            setListenersToNull();
-
-            quizMaster.setOpenentTurn(false);
-            quizMaster.setUserTurn(true);
-
-            //TODO HERE WILL BE LISTENER FOR THE OPPENENT
-
-            //TODO choose randomly an answer
-            computerTurn(i);
 
 
-
-
+    private void setListenersByTurn(String playerToStart) {
+        if(playerToStart != null) {
+            if (playerToStart.equals(PLAYER1_FB_REF)) {
+                if (currentFirebaseUser.getUid().equals(player2.getId())) {
+                    setListenersToNull();
+                } else {
+                    setListeners();
+                }
+            } else {
+                if (currentFirebaseUser.getUid().equals(player1.getId())) {
+                    setListenersToNull();
+                } else {
+                    setListeners();
+                }
+            }
         }
     }
+
+
+    //TODO HERE WILL BE LISTENER FOR THE OPPENENT
+
+    //TODO choose randomly an answer
+//            computerTurn(i);
+
 
     private void computerTurn(int i) {
 
@@ -489,9 +694,6 @@ public class CompeteActivity extends AppCompatActivity {
         return null;
     }
 
-
-
-
     private void setListeners() {
         choice1Listener();
         choice2Listener();
@@ -522,11 +724,12 @@ public class CompeteActivity extends AppCompatActivity {
 
             @Override
             public void onFinish() {
-                displayQuestion(r.nextInt(numOfQuestions));
+                changeTurns(playerToStart);
+                isqQuestionChanged = false;
+                delayTillNextQuestion();
             }
         };
     }
-
 
     private void animateProgressBar() {
         animation = ObjectAnimator.ofInt(mProgressBar, "progress", 0, 100);
@@ -554,24 +757,27 @@ public class CompeteActivity extends AppCompatActivity {
         setMcOptions();
 
 
-        r = new Random();
-        int i = 0;
+//        r = new Random();
+//        int i = 0;
         String[] arr = {null, null, null, null};
-        int []arrTocheck = {0,0,0,0};
+//        int []arrTocheck = {0,0,0,0};
 
 
         //Random place for the answers
-        do {
-            int index = r.nextInt(options.size());
-            if(arrTocheck[index] == 0){
-                arrTocheck[index] = 1;
-                String choice = options.get(index);
-                arr[i] = choice;
-                i++;
-            }
-        } while (!isAllPlaced(arrTocheck));
+//        do {
+//            int index = r.nextInt(options.size());
+//            if(arrTocheck[index] == 0){
+//                arrTocheck[index] = 1;
+//                String choice = options.get(index);
+//                arr[i] = choice;
+//                i++;
+//            }
+//        } while (!isAllPlaced(arrTocheck));
 
 
+        for(int i = 0 ; i< options.size(); i ++){
+            arr[i]= options.get(i);
+        }
         setTextToOptionsButtons(arr);
     }
 
@@ -588,7 +794,6 @@ public class CompeteActivity extends AppCompatActivity {
         choice3.setVisibility(View.VISIBLE);
         choice4.setVisibility(View.VISIBLE);
     }
-
 
     private boolean isAllPlaced(int[] arr) {
         for(int i = 0 ; i < arr.length ; i++){
@@ -625,7 +830,6 @@ public class CompeteActivity extends AppCompatActivity {
         choice4.setVisibility(View.INVISIBLE);
     }
 
-
     private void initilaizeTextView(TextView textView, String str) {
 
         textView.setText(str);
@@ -634,11 +838,10 @@ public class CompeteActivity extends AppCompatActivity {
         textView.setTextColor(Color.BLACK);
     }
 
-    private void gameOver()
-    {
+    private void gameOver() {
         AlertDialog.Builder alertDialogBuilder = new AlertDialog.Builder(CompeteActivity.this);
         alertDialogBuilder
-                .setMessage("Game Over ! your score is "+ userScore + " points")
+                .setMessage("Game Over ! your score is "+ player1Score + " points")
                 .setCancelable(false)
                 .setPositiveButton("New Game",
                         new DialogInterface.OnClickListener() {
@@ -658,6 +861,185 @@ public class CompeteActivity extends AppCompatActivity {
         AlertDialog alertDialog = alertDialogBuilder.create();
         alertDialog.show();
     }
-}
 
+    private void updateForStatsEveryPlayer() {
+
+        myRef = FirebaseDatabase.getInstance().getReference("stats");
+        mAuth = FirebaseAuth.getInstance();
+
+        String emailWithOutPoint = mAuth.getCurrentUser().getEmail().toString();
+        Log.d("Email", "check" + emailWithOutPoint);
+        emailWithOutPoint = emailWithOutPoint.replace(".", "");
+
+
+        myRef.child(emailWithOutPoint).addListenerForSingleValueEvent(new ValueEventListener() {
+            @Override
+            public void onDataChange(DataSnapshot dataSnapshot) {
+
+
+                if (mAuth.getCurrentUser().getDisplayName().equals(forSaveData.get(0))) {
+                    String highScoreFromDataBase0 = String.valueOf(dataSnapshot.child("High_Score").getValue());
+                    int highScoreFromDataBaseNumber0 = Integer.parseInt(highScoreFromDataBase0);
+                    if (highScoreFromDataBaseNumber0 < forSaveDataNumber.get(0)) // highScoreFromDataBaseNumber < theScoreInTheGame(the value for this game)
+                    {
+                        ///change the score to string
+                        dataSnapshot.getRef().child("High_Score").setValue(forSaveDataNumber.get(0));
+                    }
+                }
+
+                if (mAuth.getCurrentUser().getDisplayName().equals(forSaveData.get(1))) {
+                    String highScoreFromDataBase1 = String.valueOf(dataSnapshot.child("High_Score").getValue());
+                    int highScoreFromDataBaseNumber1 = Integer.parseInt(highScoreFromDataBase1);
+                    if (highScoreFromDataBaseNumber1 < forSaveDataNumber.get(1)) // highScoreFromDataBaseNumber < theScoreInTheGame(the value for this game)
+                    {
+                        ///change the score to string
+                        dataSnapshot.getRef().child("High_Score").setValue(forSaveDataNumber.get(1));
+                    }
+                }
+
+
+                if (forSaveDataNumber.get(0) > forSaveDataNumber.get(1)) {
+                    if (mAuth.getCurrentUser().getDisplayName().equals(forSaveData.get(0))) {
+                        String winOndatabase = String.valueOf(dataSnapshot.child("Win").getValue());
+                        int winBuilder = Integer.parseInt(winOndatabase);
+                        winBuilder++;
+                        String strI = Integer.toString(winBuilder);
+                        dataSnapshot.getRef().child("Win").setValue(strI);
+                    }
+                }
+
+                if (forSaveDataNumber.get(0) < forSaveDataNumber.get(1)) {
+                    if (mAuth.getCurrentUser().getDisplayName().equals(forSaveData.get(1))) {
+                        String winOndatabase = String.valueOf(dataSnapshot.child("Win").getValue());
+                        int winBuilder = Integer.parseInt(winOndatabase);
+                        winBuilder++;
+                        String strI = Integer.toString(winBuilder);
+                        dataSnapshot.getRef().child("Win").setValue(strI);
+                    }
+                }
+
+                if (forSaveDataNumber.get(0) < forSaveDataNumber.get(1)) {
+                    if (mAuth.getCurrentUser().getDisplayName().equals(forSaveData.get(0))) {
+                        String loseOndatabase = String.valueOf(dataSnapshot.child("Lose").getValue());
+                        int loseBuilder = Integer.parseInt(loseOndatabase);
+                        loseBuilder++;
+                        String strII = Integer.toString(loseBuilder);
+                        dataSnapshot.getRef().child("Lose").setValue(strII);
+                    }
+                }
+
+                if (forSaveDataNumber.get(0) > forSaveDataNumber.get(1)) {
+                    if (mAuth.getCurrentUser().getDisplayName().equals(forSaveData.get(1))) {
+                        String loseOndatabase = String.valueOf(dataSnapshot.child("Lose").getValue());
+                        int loseBuilder = Integer.parseInt(loseOndatabase);
+                        loseBuilder++;
+                        String strII = Integer.toString(loseBuilder);
+                        dataSnapshot.getRef().child("Lose").setValue(strII);
+                    }
+                }
+
+
+                if (mAuth.getCurrentUser().getDisplayName().equals(forSaveData.get(0))) {
+                    String myString0 = String.valueOf(dataSnapshot.child("Total_games_played").getValue());
+                    int num0 = Integer.parseInt(myString0);
+                    num0++;
+                    String strIII0 = Integer.toString(num0);
+                    dataSnapshot.getRef().child("Total_games_played").setValue(strIII0);
+                }
+                if (mAuth.getCurrentUser().getDisplayName().equals(forSaveData.get(1))) {
+                    String myString1 = String.valueOf(dataSnapshot.child("Total_games_played").getValue());
+                    int num1 = Integer.parseInt(myString1);
+                    num1++;
+                    String strIII1 = Integer.toString(num1);
+                    dataSnapshot.getRef().child("Total_games_played").setValue(strIII1);
+                }
+            }
+
+
+            @Override
+            public void onCancelled(DatabaseError databaseError) {
+
+            }
+        });
+
+
+    }
+
+    private void updateForLeaderBoard() {
+
+        myRef = FirebaseDatabase.getInstance().getReference("LeaderBoard");
+        mAuth = FirebaseAuth.getInstance();
+
+
+        if(mAuth.getCurrentUser().getDisplayName().equals(forSaveData.get(0))){
+              if(forSaveDataNumber.get(0) > forSaveDataNumber.get(1)) {
+            Map<String, String> addToLeaderBoard = new HashMap<String, String>();
+            addToLeaderBoard.put("name", forSaveData.get(0)); // who is when put in whoWin
+            String casting = Integer.toString(forSaveDataNumber.get(0));
+            addToLeaderBoard.put(SCORE_FB_REF, casting); // score who win in 1
+            myRef.push().setValue(addToLeaderBoard);
+             }
+
+        }
+        if(mAuth.getCurrentUser().getDisplayName().equals(forSaveData.get(1))){
+
+            if(forSaveDataNumber.get(0) < forSaveDataNumber.get(1)) {
+                Map<String, String> addToLeaderBoard = new HashMap<String, String>();
+                addToLeaderBoard.put("name", forSaveData.get(1)); // who is when put in whoWin
+                String casting = Integer.toString(forSaveDataNumber.get(1));
+                addToLeaderBoard.put(SCORE_FB_REF, casting); // score who win in 1
+                myRef.push().setValue(addToLeaderBoard);
+            }
+        }
+
+
+
+    }
+
+    private void intentActivityResult() {
+        if (mAuth.getCurrentUser().getDisplayName().equals(forSaveData.get(0))) {
+            if (forSaveDataNumber.get(0) > forSaveDataNumber.get(1)) {
+                Intent intent = new Intent(CompeteActivity.this, resultActivity.class);
+
+                intent.putExtra("status", "Your Win");
+
+                        String Builder = Integer.toString(forSaveDataNumber.get(0));
+                intent.putExtra(SCORE_FB_REF, Builder);
+                startActivity(intent);
+            }
+            else
+            {
+                Intent intent = new Intent(CompeteActivity.this, resultActivity.class);
+                String Builder = Integer.toString(forSaveDataNumber.get(0));
+
+                intent.putExtra("status", "You Lose");
+                intent.putExtra(SCORE_FB_REF, Builder);
+                startActivity(intent);
+            }
+        }
+
+        if (mAuth.getCurrentUser().getDisplayName().equals(forSaveData.get(1))) {
+            if (forSaveDataNumber.get(0) < forSaveDataNumber.get(1)) {
+                Intent intent = new Intent(CompeteActivity.this, resultActivity.class);
+                String Builder = Integer.toString(forSaveDataNumber.get(1));
+
+                intent.putExtra("status", "Your Win");
+                intent.putExtra(SCORE_FB_REF, Builder);
+                startActivity(intent);
+            }
+            else
+            {
+                Intent intent = new Intent(CompeteActivity.this, resultActivity.class);
+                String Builder = Integer.toString(forSaveDataNumber.get(1));
+
+                intent.putExtra("status", "You Lose");
+                intent.putExtra(SCORE_FB_REF, Builder);
+                startActivity(intent);
+            }
+        }
+    }
+
+
+
+}
 

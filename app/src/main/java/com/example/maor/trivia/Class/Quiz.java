@@ -19,7 +19,7 @@ public class Quiz {
     private ArrayList<Question> questions;
     private Context mContext;
     private static final int EASY_SCORE = 5;
-    private static final int numOfQuestionsPerGame = 10;
+    private static final int NUM_OF_QUESTIONS_PER_GAME = 10;
     private int numOfQuestionsAsked;
     int score;
     boolean isGameOver, isUserTurn, isOpenentTurn;
@@ -52,6 +52,7 @@ public class Quiz {
                 answer.replaceAll("\\s+","");
 
                 TrueFalse trueFalseQuestion = new TrueFalse(question,answer);
+
                 questions.add(trueFalseQuestion);
 
 
@@ -168,7 +169,7 @@ public class Quiz {
     }
 
     public boolean isGameOver() {
-        if( numOfQuestionsAsked <= numOfQuestionsPerGame){
+        if( numOfQuestionsAsked <= NUM_OF_QUESTIONS_PER_GAME){
             return false;
         }
         return true;
@@ -176,6 +177,22 @@ public class Quiz {
 
     public void setScore(int score) {
         this.score = score;
+    }
+
+    public static int getEasyScore() {
+        return EASY_SCORE;
+    }
+
+    public void setQuestions(ArrayList<Question> questions) {
+        this.questions = questions;
+    }
+
+    public void setmContext(Context mContext) {
+        this.mContext = mContext;
+    }
+
+    public void setNumOfQuestionsAsked(int numOfQuestionsAsked) {
+        this.numOfQuestionsAsked = numOfQuestionsAsked;
     }
 
     public void setGameOver(boolean gameOver) {
@@ -187,7 +204,7 @@ public class Quiz {
     }
 
     public static int getNumOfQuestionsPerGame() {
-        return numOfQuestionsPerGame;
+        return NUM_OF_QUESTIONS_PER_GAME;
     }
 
     public void incrementQuestionsAsked(){

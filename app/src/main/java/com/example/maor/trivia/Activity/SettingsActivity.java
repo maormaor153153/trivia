@@ -14,10 +14,12 @@ import com.firebase.ui.auth.AuthUI;
 import com.google.android.gms.auth.api.signin.GoogleSignIn;
 import com.google.android.gms.auth.api.signin.GoogleSignInClient;
 import com.google.android.gms.auth.api.signin.GoogleSignInOptions;
+import com.google.android.gms.common.api.GoogleApiClient;
 import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.Task;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
+import com.google.firebase.database.FirebaseDatabase;
 
 public class SettingsActivity extends BaseActivity implements
         View.OnClickListener{
@@ -27,6 +29,7 @@ public class SettingsActivity extends BaseActivity implements
     private Button LogOutManual;
     private FirebaseAuth mAuth;
     private GoogleSignInClient mGoogleSignInClient;
+    private GoogleApiClient check;
     public int flagForSound; // if flag is 0 no sound
                             // if flag is 1 sound
                             ToggleButton simpleToggleButton;
@@ -35,48 +38,14 @@ public class SettingsActivity extends BaseActivity implements
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_settings);
 
-
+        mAuth = FirebaseAuth.getInstance();
         SharedPreferences settings = getSharedPreferences("gameSound", 0);
         boolean silent = settings.getBoolean("switchkey", false);
-
-
-        ///Log out with Google start
-        LogOutWithGoogle = findViewById(R.id.logOutForGoolge);
-        mAuth = FirebaseAuth.getInstance();
-        GoogleSignInOptions gso = new GoogleSignInOptions.Builder(GoogleSignInOptions.DEFAULT_SIGN_IN)
-                .requestIdToken(getString(R.string.default_web_client_id))
-                .requestEmail()
-                .build();
-        mGoogleSignInClient = GoogleSignIn.getClient(this, gso);
-
-                Button LogOutWithGoogle = (Button) findViewById(R.id.logOutForGoolge);
-                LogOutWithGoogle.setOnClickListener(new View.OnClickListener() {
-                    @Override
-                    public void onClick(View view) {
-                        signOut();
-                    }
-                });
-        ///Log out with Google End
-                findViewById(R.id.logOutManual).setOnClickListener(this);
-
-         simpleToggleButton = (ToggleButton) findViewById(R.id.toggleButton); // initiate a toggle button
-
-        simpleToggleButton.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
-            @Override
-            public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
-                if(isChecked)
-                {
-                    simpleToggleButton.setChecked(true);
-                    flagForSound =1;
-                }
-                else
-                {
-                    flagForSound =1;
-                }
-            }
-        });
-
+        findViewById(R.id.logOutManual).setOnClickListener(this);
+        findViewById(R.id.logOutForGoolge).setOnClickListener(this);
     }
+
+
 
 
     public static SettingsActivity getInstance() {
@@ -92,28 +61,9 @@ public class SettingsActivity extends BaseActivity implements
         super.onResume();
 
     }
-
-
-
-    public int getFlagForSound()
-    {
-        return 1;
-    }
     private void signOut() {
         // Firebase sign out
-        mAuth.signOut();
-        // Google sign out
-        mGoogleSignInClient.signOut().addOnCompleteListener(this,
-                new OnCompleteListener<Void>() {
-                    @Override
-                    public void onComplete(@NonNull Task<Void> task) {
-                        updateUI(null);
-                        Intent intent = new Intent(SettingsActivity.this, HomeActivity.class);
-                        startActivity(intent);
-                        ourInstance.finish();
 
-                    }
-                });
     }
     private void updateUI(FirebaseUser user) {
         hideProgressDialog();
@@ -125,24 +75,53 @@ public class SettingsActivity extends BaseActivity implements
             findViewById(R.id.logOutForGoolge).setVisibility(View.GONE);
         }
     }
-
-
-
     public void onClick(View v) {
 
-        if (v.getId() == R.id.logOutManual) {
-            AuthUI.getInstance()
-                    .signOut(this)
-                    .addOnCompleteListener(new OnCompleteListener<Void>() {
-                        public void onComplete(@NonNull Task<Void> task) {
-                            // user is now signed out
-                            startActivity(new Intent(SettingsActivity.this, HomeActivity.class));
-                            finish();
-                            ourInstance.finish();
 
-                        }
-                    });
+            if (v.getId() == R.id.logOutManual) {
+
+                AuthUI.getInstance()
+                        .signOut(this)
+                        .addOnCompleteListener(new OnCompleteListener<Void>() {
+                            public void onComplete(@NonNull Task<Void> task) {
+                                // user is now signed out
+                                startActivity(new Intent(SettingsActivity.this, HomeActivity.class));
+                                finish();
+                                ourInstance.finish();
+
+                            }
+                        });
+
         }
+        ///Log out with Google start
+            if(v.getId() == R.id.logOutForGoolge) {
 
+                    mAuth = FirebaseAuth.getInstance();
+                    GoogleSignInOptions gso = new GoogleSignInOptions.Builder(GoogleSignInOptions.DEFAULT_SIGN_IN)
+                            .requestIdToken(getString(R.string.default_web_client_id))
+                            .requestEmail()
+                            .build();
+                    mGoogleSignInClient = GoogleSignIn.getClient(this, gso);
+
+                    Button LogOutWithGoogle = (Button) findViewById(R.id.logOutForGoolge);
+                mAuth.signOut();
+                // Google sign out
+                mGoogleSignInClient.signOut().addOnCompleteListener(this,
+                        new OnCompleteListener<Void>() {
+                            @Override
+                            public void onComplete(@NonNull Task<Void> task) {
+                                updateUI(null);
+                                Intent intent = new Intent(SettingsActivity.this, HomeActivity.class);
+                                startActivity(intent);
+                                finish();
+                                ourInstance.finish();
+
+                            }
+                        });
+                    ///Log out with Google End
+
+            }
     }
+
+
 }

@@ -460,7 +460,7 @@ public class QuickGameActivity extends AppCompatActivity {
                             }
                         });
 
-        AlertDialog alertDialog = alertDialogBuilder.create();
+        AlertDialog alertDialog = alertDialogBuilder.create(); //TODO: change its
         alertDialog.show();
     }
 }
