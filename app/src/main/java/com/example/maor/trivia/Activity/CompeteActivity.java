@@ -758,7 +758,7 @@ public class CompeteActivity extends AppCompatActivity {
     }
 
     private void initTimer() {
-        timer = new CountDownTimer(10000,1000){
+        timer = new CountDownTimer(20000,1000){
 
             @Override
             public void onTick(long millisUntilFinished) {
@@ -776,7 +776,7 @@ public class CompeteActivity extends AppCompatActivity {
 
     private void animateProgressBar() {
         animation = ObjectAnimator.ofInt(mProgressBar, "progress", 0, 100);
-        animation.setDuration(10000);
+        animation.setDuration(20000);
         animation.setInterpolator(new DecelerateInterpolator());
         animation.addListener(new Animator.AnimatorListener() {
             @Override
